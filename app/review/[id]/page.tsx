@@ -12,6 +12,7 @@ import { DecisionBar } from "@/features/review/detail/components/decision-bar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { ReviewStatus } from "@/shared/types";
+import { ProtectedRoute } from "@/shared/components/protected-route";
 
 export default function ReviewDetailPage() {
   const params = useParams();
@@ -68,22 +69,24 @@ export default function ReviewDetailPage() {
   }
 
   return (
-    <AppShell>
-      <div className="mx-auto max-w-6xl">
-        <ReviewHeader status={item.status} />
+    <ProtectedRoute>
+      <AppShell>
+        <div className="mx-auto max-w-6xl">
+          <ReviewHeader status={item.status} />
 
-        <div className="mb-6 grid gap-6 md:grid-cols-2">
-          <PromptPanel prompt={item.prompt} />
-          <OutputPanel output={item.modelOutput} itemId={id} />
+          <div className="mb-6 grid gap-6 md:grid-cols-2">
+            <PromptPanel prompt={item.prompt} />
+            <OutputPanel output={item.modelOutput} itemId={id} />
+          </div>
+
+          <DecisionBar
+            currentStatus={item.status}
+            currentFeedback={item.feedback}
+            onUpdate={handleUpdate}
+            saving={mutation.isPending}
+          />
         </div>
-
-        <DecisionBar
-          currentStatus={item.status}
-          currentFeedback={item.feedback}
-          onUpdate={handleUpdate}
-          saving={mutation.isPending}
-        />
-      </div>
-    </AppShell>
+      </AppShell>
+    </ProtectedRoute>
   );
 }
