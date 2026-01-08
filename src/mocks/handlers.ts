@@ -42,6 +42,31 @@ export const handlers = [
     return HttpResponse.json(item);
   }),
 
+  http.get("/api/review-items/:id/stream", ({ params }) => {
+    const { id } = params;
+    const item = mockReviewItems.find((item) => item.id === id);
+
+    if (!item) {
+      return HttpResponse.json(
+        { message: "Review item not found" },
+        { status: 404 }
+      );
+    }
+
+    const text = item.modelOutput;
+    const chunkSize = 15;
+    const chunks: string[] = [];
+
+    for (let i = 0; i < text.length; i += chunkSize) {
+      chunks.push(text.slice(i, i + chunkSize));
+    }
+
+    return HttpResponse.json({
+      chunks,
+      delayMs: 50,
+    });
+  }),
+
   http.patch("/api/review-items/:id", async ({ params, request }) => {
     const { id } = params;
     const body = (await request.json()) as {
