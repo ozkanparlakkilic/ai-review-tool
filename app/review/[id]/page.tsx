@@ -4,18 +4,28 @@ import React from "react";
 import { useParams, useRouter } from "next/navigation";
 import { AppShell } from "@/shared/components/app-shell";
 import { useReviewDetail } from "@/features/review/detail/hooks/useReviewDetail";
+import { useReviewDecision } from "@/features/review/detail/hooks/useReviewDecision";
 import { ReviewHeader } from "@/features/review/detail/components/review-header";
 import { PromptPanel } from "@/features/review/detail/components/prompt-panel";
 import { OutputPanel } from "@/features/review/detail/components/output-panel";
 import { DecisionBar } from "@/features/review/detail/components/decision-bar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { ReviewStatus } from "@/shared/types";
 
 export default function ReviewDetailPage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
-  const { item, loading, error, saving, updateItem } = useReviewDetail(id);
+  const { item, loading, error } = useReviewDetail(id);
+  const mutation = useReviewDecision(id);
+
+  const handleUpdate = async (
+    status: ReviewStatus,
+    feedback?: string | null
+  ) => {
+    await mutation.mutateAsync({ status, feedback });
+  };
 
   if (loading) {
     return (
@@ -70,8 +80,8 @@ export default function ReviewDetailPage() {
         <DecisionBar
           currentStatus={item.status}
           currentFeedback={item.feedback}
-          onUpdate={updateItem}
-          saving={saving}
+          onUpdate={handleUpdate}
+          saving={mutation.isPending}
         />
       </div>
     </AppShell>
