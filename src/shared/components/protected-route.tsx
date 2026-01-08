@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { Role } from "@/shared/constants/roles";
 import { Skeleton } from "@/components/ui/skeleton";
