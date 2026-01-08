@@ -26,15 +26,36 @@ This milestone includes:
 - ✅ Loading states and error handling
 - ✅ MSW PATCH endpoint for updating reviews
 
+## M3 - Advanced Features Complete ✅
+
+This milestone includes:
+
+- ✅ TanStack Query for server-state management (caching, invalidation, optimistic updates)
+- ✅ Streaming AI output rendering (buffered, cancellable, auto-scroll aware)
+- ✅ Bulk actions (multi-select approve / reject with optimistic UI)
+- ✅ Advanced filtering & search in review queue
+- ✅ Paginated & sortable data table for reviews
+- ✅ Insights dashboard (KPIs, trends, status distribution)
+- ✅ MSW-powered mock backend with realistic handlers
+- ✅ CI/CD with GitHub Actions
+- ✅ Dockerized development environment
+
 ## Features
 
 ### Review Queue
 
 - **Status Filtering**: Switch between Pending, Approved, and Rejected items using tabs
-- **Search**: Search review items by prompt text
-- **Table View**: Clean table displaying prompt, status badge, timestamp, and actions
+- **Advanced Search**: Filter by prompt text, status, and priority
+- **Bulk Actions**: Select multiple items to approve or reject in bulk
+- **Table View**: Sortable columns for prompt, status, priority, and date
 - **Empty State**: Helpful message when no results are found
 - **Navigation**: Click "Review" to view item details
+
+### Insights Dashboard
+
+- **KPI Cards**: View total reviews, pending count, approval rate, and average time
+- **Charts**: Visual distribution of review statuses
+- **Trends**: Track review volume over time
 
 ### Review Detail Page
 
@@ -56,7 +77,8 @@ This milestone includes:
 - **Styling**: Tailwind CSS 4
 - **UI Components**: shadcn/ui (Button, Input, Table, Badge, Tabs, Card, Textarea, Separator, Skeleton, Sonner)
 - **API Mocking**: MSW (Mock Service Worker)
-- **State Management**: React hooks (useState, useEffect, useCallback)
+- **Data Fetching**: TanStack Query v5
+- **State Management**: React hooks + TanStack Query (Server State)
 - **Package Manager**: pnpm 9.15.4
 - **Code Quality**: ESLint, Prettier, Husky, lint-staged
 - **Containerization**: Docker + Docker Compose
@@ -274,6 +296,14 @@ interface ReviewItem {
 - ✅ Loading skeletons display during fetch
 - ✅ 404 and error states handled gracefully
 
+### M3 - Advanced Features
+
+- ✅ Bulk actions work correctly (optimistic updates)
+- ✅ Insights dashboard renders charts and KPIs
+- ✅ Advanced filtering (Status + Priority) works
+- ✅ Sorting by columns works
+- ✅ TanStack Query caching and invalidation verified
+
 ## CI/CD Workflows
 
 This project includes three GitHub Actions workflows:
@@ -316,19 +346,15 @@ This project includes three GitHub Actions workflows:
 - `docker-compose.dev.yml` - Development compose setup
 - `lighthouserc.json` - Lighthouse CI configuration
 
-## Next Steps (M3+)
+## Next Steps
 
-Future milestones will include:
-
-- TanStack Query for server state management and caching
-- Real backend API integration (replacing MSW)
-- User authentication and authorization
-- Activity log and audit trail
-- Bulk actions (approve/reject multiple items)
-- Advanced filtering and sorting
-- E2E testing with Playwright
-- Monitoring and observability
-- Performance optimizations
+- 🔐 Authentication & role-based authorization (Reviewer / Admin)
+- 🧾 Audit log & activity timeline with CSV export
+- 🧪 End-to-end testing with Playwright
+- 📡 Real backend API integration (replace MSW)
+- 📊 Monitoring & observability (Sentry)
+- ⚡ Performance optimizations (virtualization, profiling)
+- 📄 Full case study & architecture documentation
 
 ## License
 
