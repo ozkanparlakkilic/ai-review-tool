@@ -22,6 +22,7 @@ interface ReviewTableProps {
   onToggleAll?: (checked: boolean) => void;
   isAllSelected?: boolean;
   isSomeSelected?: boolean;
+  selectionDisabled?: boolean;
 }
 
 export function ReviewTable({
@@ -31,6 +32,7 @@ export function ReviewTable({
   onToggleAll,
   isAllSelected,
   isSomeSelected,
+  selectionDisabled = false,
 }: ReviewTableProps) {
   const router = useRouter();
   const hasSelection = selectedIds !== undefined && onToggleRow !== undefined;
@@ -61,6 +63,7 @@ export function ReviewTable({
                   checked={isAllSelected || (isSomeSelected && "indeterminate")}
                   onCheckedChange={(checked) => onToggleAll?.(checked === true)}
                   aria-label="Select all"
+                  disabled={selectionDisabled}
                 />
               </TableHead>
             )}
@@ -79,6 +82,7 @@ export function ReviewTable({
                     checked={selectedIds?.has(item.id)}
                     onCheckedChange={() => onToggleRow?.(item.id)}
                     aria-label={`Select ${item.prompt}`}
+                    disabled={selectionDisabled}
                   />
                 </TableCell>
               )}

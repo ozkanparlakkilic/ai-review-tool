@@ -118,13 +118,15 @@ export default function HomePage() {
         />
       </div>
 
-      <BulkActionBar
-        selectedCount={selectedCount}
-        onApprove={handleApprove}
-        onReject={handleReject}
-        onClear={clearSelection}
-        disabled={mutation.isPending}
-      />
+      {status === "PENDING" && (
+        <BulkActionBar
+          selectedCount={selectedCount}
+          onApprove={handleApprove}
+          onReject={handleReject}
+          onClear={clearSelection}
+          disabled={mutation.isPending}
+        />
+      )}
 
       {loading && (
         <div className="text-muted-foreground py-12 text-center">
@@ -148,6 +150,7 @@ export default function HomePage() {
           onToggleAll={(checked) => toggleAll(itemIds, checked)}
           isAllSelected={allSelected}
           isSomeSelected={someSelected}
+          selectionDisabled={status !== "PENDING"}
         />
       )}
 
