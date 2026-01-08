@@ -4,8 +4,8 @@ import { ReviewStatus } from "@/shared/types";
 import { getReviewItems } from "../services/reviewItemsApi";
 import { queryKeys } from "@/shared/constants/queryKeys";
 
-export function useReviewQueue() {
-  const [status, setStatus] = useState<ReviewStatus>("PENDING");
+export function useReviewQueue(initialStatus?: ReviewStatus) {
+  const [status, setStatus] = useState<ReviewStatus | undefined>(initialStatus);
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data, isLoading, isError, error, refetch } = useQuery({

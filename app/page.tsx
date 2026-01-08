@@ -1,172 +1,113 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
 import { AppShell } from "@/shared/components/app-shell";
-import { EmptyState } from "@/shared/components/empty-state";
-import { QueueHeader } from "@/features/review/queue/components/queue-header";
-import { StatusFilter } from "@/features/review/queue/components/status-filter";
-import { ReviewTable } from "@/features/review/queue/components/review-table";
-import { BulkActionBar } from "@/features/review/queue/components/bulk-action-bar";
-import { ConfirmBulkDialog } from "@/features/review/queue/components/confirm-bulk-dialog";
-import { RejectReasonDialog } from "@/features/review/queue/components/reject-reason-dialog";
-import { Input } from "@/components/ui/input";
+import { ReviewItem } from "@/shared/types";
 import { useReviewQueue } from "@/features/review/queue/hooks/useReviewQueue";
-import { useRowSelection } from "@/features/review/queue/hooks/useRowSelection";
 import { useBulkDecision } from "@/features/review/queue/hooks/useBulkDecision";
-import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
+import { DataTable } from "@/components/ui/data-table/data-table";
+import { columns } from "@/features/review/queue/components/columns";
+import { priorities, statuses } from "@/features/review/queue/constants";
+import { Button } from "@/components/ui/button";
 
 export default function HomePage() {
-  const {
-    items,
-    loading,
-    error,
-    status,
-    setStatus,
-    searchQuery,
-    setSearchQuery,
-  } = useReviewQueue();
-
-  const {
-    selectedIds,
-    selectedCount,
-    toggleRow,
-    toggleAll,
-    clearSelection,
-    isAllSelected,
-    isSomeSelected,
-  } = useRowSelection();
-
+  const { items, loading, error } = useReviewQueue();
   const mutation = useBulkDecision();
 
-  const [confirmDialog, setConfirmDialog] = useState<{
-    open: boolean;
-    action: "approve" | "reject";
-  }>({ open: false, action: "approve" });
-
-  const [rejectDialog, setRejectDialog] = useState(false);
-
-  useEffect(() => {
-    clearSelection();
-  }, [status, searchQuery, clearSelection]);
-
-  const handleApprove = () => {
-    setConfirmDialog({ open: true, action: "approve" });
+  const handleApprove = (ids: string[]) => {
+    mutation.mutate({ ids, status: "APPROVED" });
   };
 
-  const handleReject = () => {
-    setRejectDialog(true);
+  const handleReject = (ids: string[]) => {
+    mutation.mutate({ ids, status: "REJECTED" });
   };
 
-  const handleConfirmApprove = async () => {
-    try {
-      const ids = Array.from(selectedIds);
-      const result = await mutation.mutateAsync({
-        ids,
-        status: "APPROVED",
-      });
+  if (loading) {
+    return (
+      <AppShell>
+        <div className="space-y-4">
+          <Skeleton className="h-8 w-[200px]" />
+          <Skeleton className="h-[400px] w-full" />
+        </div>
+      </AppShell>
+    );
+  }
 
-      toast.success(`Approved ${result.updated.length} items`);
-      if (result.failed.length > 0) {
-        toast.error(`${result.failed.length} items failed`);
-      }
-      clearSelection();
-      setConfirmDialog({ open: false, action: "approve" });
-    } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to approve items"
-      );
-    }
-  };
-
-  const handleConfirmReject = async (reason: string) => {
-    try {
-      const ids = Array.from(selectedIds);
-      const result = await mutation.mutateAsync({
-        ids,
-        status: "REJECTED",
-        feedback: reason,
-      });
-
-      toast.success(`Rejected ${result.updated.length} items`);
-      if (result.failed.length > 0) {
-        toast.error(`${result.failed.length} items failed`);
-      }
-      clearSelection();
-      setRejectDialog(false);
-    } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to reject items"
-      );
-    }
-  };
-
-  const itemIds = items.map((item) => item.id);
-  const allSelected = isAllSelected(itemIds);
-  const someSelected = isSomeSelected(itemIds);
+  if (error) {
+    return (
+      <AppShell>
+        <div className="py-12 text-center">
+          <h2 className="mb-2 text-2xl font-bold">Error Loading Queue</h2>
+          <p className="text-muted-foreground">
+            Failed to load review items. Please try again.
+          </p>
+        </div>
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell>
-      <QueueHeader />
-
-      <div className="mb-6 flex flex-col gap-4">
-        <StatusFilter value={status} onChange={setStatus} />
-        <Input
-          placeholder="Search prompts…"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="max-w-sm"
-        />
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold">Review Queue</h2>
+          <p className="text-muted-foreground mt-1">
+            Review and validate AI-generated content
+          </p>
+        </div>
       </div>
 
-      {status === "PENDING" && (
-        <BulkActionBar
-          selectedCount={selectedCount}
-          onApprove={handleApprove}
-          onReject={handleReject}
-          onClear={clearSelection}
-          disabled={mutation.isPending}
-        />
-      )}
-
-      {loading && (
-        <div className="text-muted-foreground py-12 text-center">
-          Loading...
-        </div>
-      )}
-
-      {error && (
-        <div className="text-destructive py-12 text-center">
-          Error: {error.message}
-        </div>
-      )}
-
-      {!loading && !error && items.length === 0 && <EmptyState />}
-
-      {!loading && !error && items.length > 0 && (
-        <ReviewTable
-          items={items}
-          selectedIds={selectedIds}
-          onToggleRow={toggleRow}
-          onToggleAll={(checked) => toggleAll(itemIds, checked)}
-          isAllSelected={allSelected}
-          isSomeSelected={someSelected}
-          selectionDisabled={status !== "PENDING"}
-        />
-      )}
-
-      <ConfirmBulkDialog
-        open={confirmDialog.open && confirmDialog.action === "approve"}
-        onOpenChange={(open) => setConfirmDialog({ ...confirmDialog, open })}
-        action="approve"
-        count={selectedCount}
-        onConfirm={handleConfirmApprove}
-      />
-
-      <RejectReasonDialog
-        open={rejectDialog}
-        onOpenChange={setRejectDialog}
-        count={selectedCount}
-        onConfirm={handleConfirmReject}
+      <DataTable
+        columns={columns}
+        data={items}
+        searchKey="prompt"
+        searchPlaceholder="Filter prompts..."
+        filters={[
+          {
+            columnId: "status",
+            title: "Status",
+            options: statuses,
+          },
+          {
+            columnId: "priority",
+            title: "Priority",
+            options: priorities,
+          },
+        ]}
+        renderBulkActions={(table) => (
+          <>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                const ids = table
+                  .getFilteredSelectedRowModel()
+                  .rows.map((r) => (r.original as ReviewItem).id);
+                handleReject(ids);
+                table.resetRowSelection();
+              }}
+              disabled={mutation.isPending}
+            >
+              Reject Selected
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => {
+                const ids = table
+                  .getFilteredSelectedRowModel()
+                  .rows.map((r) => (r.original as ReviewItem).id);
+                handleApprove(ids);
+                table.resetRowSelection();
+              }}
+              disabled={mutation.isPending}
+            >
+              Approve Selected
+            </Button>
+          </>
+        )}
+        enableRowSelection={(row) =>
+          (row.original as ReviewItem).status === "PENDING"
+        }
       />
     </AppShell>
   );
