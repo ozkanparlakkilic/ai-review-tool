@@ -74,7 +74,7 @@ export default function ReviewDetailPage() {
 
         <div className="mb-6 grid gap-6 md:grid-cols-2">
           <PromptPanel prompt={item.prompt} />
-          <OutputPanel output={item.modelOutput} />
+          <OutputPanel output={item.modelOutput} itemId={id} />
         </div>
 
         <DecisionBar
