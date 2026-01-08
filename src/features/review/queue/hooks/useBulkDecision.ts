@@ -58,6 +58,7 @@ export function useBulkDecision() {
 
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["review-items"] });
+      queryClient.invalidateQueries({ queryKey: ["metrics"] });
     },
   });
 }

@@ -72,6 +72,7 @@ export function useReviewDecision(itemId: string) {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.reviewItem(itemId) });
       queryClient.invalidateQueries({ queryKey: ["review-items"] });
+      queryClient.invalidateQueries({ queryKey: ["metrics"] });
     },
   });
 }
