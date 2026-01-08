@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { Role } from "@/shared/constants/roles";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ForbiddenError } from "./errors/forbidden-error";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -21,16 +22,8 @@ export function ProtectedRoute({
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       router.push("/login");
-    } else if (
-      !isLoading &&
-      isAuthenticated &&
-      allowedRoles &&
-      user &&
-      !allowedRoles.includes(user.role)
-    ) {
-      router.push("/");
     }
-  }, [isLoading, isAuthenticated, user, allowedRoles, router]);
+  }, [isLoading, isAuthenticated, router]);
 
   if (isLoading) {
     return (
@@ -48,7 +41,7 @@ export function ProtectedRoute({
   }
 
   if (allowedRoles && user && !allowedRoles.includes(user.role)) {
-    return null;
+    return <ForbiddenError />;
   }
 
   return <>{children}</>;

@@ -18,7 +18,7 @@ export function UnauthorizedError() {
           <Button variant="outline" onClick={() => router.back()}>
             Go Back
           </Button>
-          <Button onClick={() => router.push("/")}>Back to Home</Button>
+          <Button onClick={() => router.push("/login")}>Sign In</Button>
         </div>
       </div>
     </div>
