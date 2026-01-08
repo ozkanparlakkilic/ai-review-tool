@@ -10,10 +10,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/shared/components/status-badge";
 import { ReviewItem } from "@/shared/types";
-import { STATUS_COLORS, STATUS_LABELS } from "../constants";
 
 interface ReviewTableProps {
   items: ReviewItem[];
@@ -55,9 +54,7 @@ export function ReviewTable({ items }: ReviewTableProps) {
                 {truncateText(item.prompt)}
               </TableCell>
               <TableCell>
-                <Badge variant={STATUS_COLORS[item.status]}>
-                  {STATUS_LABELS[item.status]}
-                </Badge>
+                <StatusBadge status={item.status} />
               </TableCell>
               <TableCell className="text-muted-foreground">
                 {formatDate(item.updatedAt)}
