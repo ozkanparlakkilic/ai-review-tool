@@ -1,5 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { mockReviewItems } from "./data";
+import { ReviewStatus } from "@/shared/types";
 
 export const handlers = [
   http.get("/api/review-items", ({ request }) => {
@@ -39,5 +40,40 @@ export const handlers = [
     }
 
     return HttpResponse.json(item);
+  }),
+
+  http.patch("/api/review-items/:id", async ({ params, request }) => {
+    const { id } = params;
+    const body = (await request.json()) as {
+      status: ReviewStatus;
+      feedback?: string | null;
+    };
+
+    const itemIndex = mockReviewItems.findIndex((item) => item.id === id);
+
+    if (itemIndex === -1) {
+      return HttpResponse.json(
+        { message: "Review item not found" },
+        { status: 404 }
+      );
+    }
+
+    if (
+      !body.status ||
+      !["APPROVED", "REJECTED", "PENDING"].includes(body.status)
+    ) {
+      return HttpResponse.json({ message: "Invalid status" }, { status: 400 });
+    }
+
+    const now = new Date().toISOString();
+    mockReviewItems[itemIndex] = {
+      ...mockReviewItems[itemIndex],
+      status: body.status,
+      feedback: body.feedback ?? null,
+      reviewedAt: body.status !== "PENDING" ? now : null,
+      updatedAt: now,
+    };
+
+    return HttpResponse.json(mockReviewItems[itemIndex]);
   }),
 ];
