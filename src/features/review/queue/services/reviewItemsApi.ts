@@ -6,6 +6,17 @@ export interface GetReviewItemsParams {
   q?: string;
 }
 
+export interface BatchUpdateRequest {
+  ids: string[];
+  status: ReviewStatus;
+  feedback?: string | null;
+}
+
+export interface BatchUpdateResponse {
+  updated: ReviewItem[];
+  failed: { id: string; reason: string }[];
+}
+
 export async function getReviewItems(
   params?: GetReviewItemsParams
 ): Promise<ReviewItem[]> {
@@ -27,4 +38,13 @@ export async function getReviewItems(
 
 export async function getReviewItem(id: string): Promise<ReviewItem> {
   return http<ReviewItem>(`/review-items/${id}`);
+}
+
+export async function patchBatchReviewItems(
+  data: BatchUpdateRequest
+): Promise<BatchUpdateResponse> {
+  return http<BatchUpdateResponse>("/review-items/batch", {
+    method: "PATCH",
+    body: JSON.stringify(data),
+  });
 }
