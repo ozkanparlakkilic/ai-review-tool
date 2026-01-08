@@ -28,6 +28,39 @@ export const handlers = [
     return HttpResponse.json(filtered);
   }),
 
+  http.patch("/api/review-items/batch", async ({ request }) => {
+    const body = (await request.json()) as {
+      ids: string[];
+      status: ReviewStatus;
+      feedback?: string | null;
+    };
+
+    const updated: typeof mockReviewItems = [];
+    const failed: { id: string; reason: string }[] = [];
+    const now = new Date().toISOString();
+
+    body.ids.forEach((id) => {
+      const itemIndex = mockReviewItems.findIndex((item) => item.id === id);
+
+      if (itemIndex === -1) {
+        failed.push({ id, reason: "Item not found" });
+        return;
+      }
+
+      mockReviewItems[itemIndex] = {
+        ...mockReviewItems[itemIndex],
+        status: body.status,
+        feedback: body.feedback ?? null,
+        reviewedAt: body.status !== "PENDING" ? now : null,
+        updatedAt: now,
+      };
+
+      updated.push(mockReviewItems[itemIndex]);
+    });
+
+    return HttpResponse.json({ updated, failed });
+  }),
+
   http.get("/api/review-items/:id", ({ params }) => {
     const { id } = params;
     const item = mockReviewItems.find((item) => item.id === id);
@@ -100,38 +133,5 @@ export const handlers = [
     };
 
     return HttpResponse.json(mockReviewItems[itemIndex]);
-  }),
-
-  http.patch("/api/review-items/batch", async ({ request }) => {
-    const body = (await request.json()) as {
-      ids: string[];
-      status: ReviewStatus;
-      feedback?: string | null;
-    };
-
-    const updated: typeof mockReviewItems = [];
-    const failed: { id: string; reason: string }[] = [];
-    const now = new Date().toISOString();
-
-    body.ids.forEach((id) => {
-      const itemIndex = mockReviewItems.findIndex((item) => item.id === id);
-
-      if (itemIndex === -1) {
-        failed.push({ id, reason: "Item not found" });
-        return;
-      }
-
-      mockReviewItems[itemIndex] = {
-        ...mockReviewItems[itemIndex],
-        status: body.status,
-        feedback: body.feedback ?? null,
-        reviewedAt: body.status !== "PENDING" ? now : null,
-        updatedAt: now,
-      };
-
-      updated.push(mockReviewItems[itemIndex]);
-    });
-
-    return HttpResponse.json({ updated, failed });
   }),
 ];
