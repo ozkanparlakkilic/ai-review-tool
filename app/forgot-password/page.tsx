@@ -29,11 +29,11 @@ export default function ForgotPasswordPage() {
           <ForgotPasswordForm />
         </CardContent>
         <CardFooter>
-          <p className="mx-auto px-8 text-center text-sm text-balance text-muted-foreground">
+          <p className="text-muted-foreground mx-auto px-8 text-center text-sm text-balance">
             Don&apos;t have an account?{" "}
             <Link
               href="/sign-up"
-              className="underline underline-offset-4 hover:text-primary"
+              className="hover:text-primary underline underline-offset-4"
             >
               Sign up
             </Link>

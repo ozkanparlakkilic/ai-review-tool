@@ -370,7 +370,7 @@ This project includes three GitHub Actions workflows:
 ## Next Steps
 
 - 🧾 Audit log & activity timeline with CSV export
--  End-to-end testing with Playwright
+- End-to-end testing with Playwright
 - 📡 Real backend API integration (replace MSW)
 - 📊 Monitoring & observability (Sentry)
 - ⚡ Performance optimizations (virtualization, profiling)

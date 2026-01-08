@@ -10,7 +10,7 @@ interface AuthLayoutProps {
 
 export function AuthLayout({ children }: AuthLayoutProps) {
   return (
-    <div className="relative container grid h-svh flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0 mx-auto">
+    <div className="relative container mx-auto grid h-svh flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
       <div className="lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-2 py-8 sm:w-[480px] sm:p-8">
           <div className="mb-4 flex items-center justify-center">
@@ -25,7 +25,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
 
       <div
         className={cn(
-          "relative h-full overflow-hidden bg-muted max-lg:hidden",
+          "bg-muted relative h-full overflow-hidden max-lg:hidden",
           "[&>img]:absolute [&>img]:top-[15%] [&>img]:left-20 [&>img]:h-full [&>img]:w-full [&>img]:object-cover [&>img]:object-top-left [&>img]:select-none"
         )}
       >
@@ -34,7 +34,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
           width={1024}
           height={1151}
           alt="Auth Background"
-          className="object-cover rounded-xl shadow-2xl border"
+          className="rounded-xl border object-cover shadow-2xl"
           priority
         />
       </div>

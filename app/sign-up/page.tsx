@@ -25,7 +25,7 @@ export default function SignUpPage() {
             Already have an account?{" "}
             <Link
               href="/login"
-              className="underline underline-offset-4 hover:text-primary"
+              className="hover:text-primary underline underline-offset-4"
             >
               Sign In
             </Link>
@@ -35,18 +35,18 @@ export default function SignUpPage() {
           <SignUpForm />
         </CardContent>
         <CardFooter>
-          <p className="px-8 text-center text-sm text-muted-foreground">
+          <p className="text-muted-foreground px-8 text-center text-sm">
             By creating an account, you agree to our{" "}
             <a
               href="/terms"
-              className="underline underline-offset-4 hover:text-primary"
+              className="hover:text-primary underline underline-offset-4"
             >
               Terms of Service
             </a>{" "}
             and{" "}
             <a
               href="/privacy"
-              className="underline underline-offset-4 hover:text-primary"
+              className="hover:text-primary underline underline-offset-4"
             >
               Privacy Policy
             </a>

@@ -46,7 +46,7 @@ export function OtpForm({ className, ...props }: OtpFormProps) {
 
   function onSubmit() {
     setIsLoading(true);
-    
+
     // Mock verification
     setTimeout(() => {
       setIsLoading(false);

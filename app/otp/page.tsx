@@ -29,11 +29,11 @@ export default function OtpPage() {
           <OtpForm />
         </CardContent>
         <CardFooter>
-          <p className="px-8 text-center text-sm text-muted-foreground">
+          <p className="text-muted-foreground px-8 text-center text-sm">
             Haven&apos;t received it?{" "}
             <Link
               href="/login"
-              className="underline underline-offset-4 hover:text-primary"
+              className="hover:text-primary underline underline-offset-4"
             >
               Resend a new code.
             </Link>

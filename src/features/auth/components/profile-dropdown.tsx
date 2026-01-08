@@ -49,12 +49,12 @@ export function ProfileDropdown() {
                 <p className="text-sm leading-none font-medium">{user.name}</p>
                 <Badge
                   variant="secondary"
-                  className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white border-none text-[10px] px-1.5 py-0 h-4 font-semibold uppercase tracking-wider"
+                  className="h-4 border-none bg-blue-500 px-1.5 py-0 text-[10px] font-semibold tracking-wider text-white uppercase hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
                 >
                   {user.role}
                 </Badge>
               </div>
-              <p className="text-xs leading-none text-muted-foreground">
+              <p className="text-muted-foreground text-xs leading-none">
                 {user.email}
               </p>
             </div>

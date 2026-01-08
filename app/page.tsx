@@ -52,72 +52,72 @@ export default function HomePage() {
   return (
     <ProtectedRoute>
       <AppShell>
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold">Review Queue</h2>
-          <p className="text-muted-foreground mt-1">
-            Review and validate AI-generated content
-          </p>
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h2 className="text-3xl font-bold">Review Queue</h2>
+            <p className="text-muted-foreground mt-1">
+              Review and validate AI-generated content
+            </p>
+          </div>
         </div>
-      </div>
 
-      <DataTable
-        columns={columns}
-        data={items}
-        searchKey="prompt"
-        searchPlaceholder="Filter prompts..."
-        filters={[
-          {
-            columnId: "status",
-            title: "Status",
-            options: statuses,
-          },
-          {
-            columnId: "priority",
-            title: "Priority",
-            options: priorities,
-          },
-        ]}
-        renderBulkActions={
-          isAdmin
-            ? (table) => (
-                <>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      const ids = table
-                        .getFilteredSelectedRowModel()
-                        .rows.map((r) => (r.original as ReviewItem).id);
-                      handleReject(ids);
-                      table.resetRowSelection();
-                    }}
-                    disabled={mutation.isPending}
-                  >
-                    Reject Selected
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={() => {
-                      const ids = table
-                        .getFilteredSelectedRowModel()
-                        .rows.map((r) => (r.original as ReviewItem).id);
-                      handleApprove(ids);
-                      table.resetRowSelection();
-                    }}
-                    disabled={mutation.isPending}
-                  >
-                    Approve Selected
-                  </Button>
-                </>
-              )
-            : undefined
-        }
-        enableRowSelection={(row) =>
-          (row.original as ReviewItem).status === "PENDING"
-        }
-      />
-    </AppShell>
+        <DataTable
+          columns={columns}
+          data={items}
+          searchKey="prompt"
+          searchPlaceholder="Filter prompts..."
+          filters={[
+            {
+              columnId: "status",
+              title: "Status",
+              options: statuses,
+            },
+            {
+              columnId: "priority",
+              title: "Priority",
+              options: priorities,
+            },
+          ]}
+          renderBulkActions={
+            isAdmin
+              ? (table) => (
+                  <>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        const ids = table
+                          .getFilteredSelectedRowModel()
+                          .rows.map((r) => (r.original as ReviewItem).id);
+                        handleReject(ids);
+                        table.resetRowSelection();
+                      }}
+                      disabled={mutation.isPending}
+                    >
+                      Reject Selected
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        const ids = table
+                          .getFilteredSelectedRowModel()
+                          .rows.map((r) => (r.original as ReviewItem).id);
+                        handleApprove(ids);
+                        table.resetRowSelection();
+                      }}
+                      disabled={mutation.isPending}
+                    >
+                      Approve Selected
+                    </Button>
+                  </>
+                )
+              : undefined
+          }
+          enableRowSelection={(row) =>
+            (row.original as ReviewItem).status === "PENDING"
+          }
+        />
+      </AppShell>
     </ProtectedRoute>
   );
 }

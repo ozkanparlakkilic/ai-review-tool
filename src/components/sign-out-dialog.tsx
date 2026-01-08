@@ -20,18 +20,24 @@ interface SignOutDialogProps {
 
 export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
   const pathname = usePathname();
-  
+
   const handleSignOut = () => {
-    const callbackUrl = pathname !== "/" ? `/login?callbackUrl=${encodeURIComponent(pathname)}` : "/login";
+    const callbackUrl =
+      pathname !== "/"
+        ? `/login?callbackUrl=${encodeURIComponent(pathname)}`
+        : "/login";
     signOut({ callbackUrl });
   };
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you sure you want to sign out?</AlertDialogTitle>
+          <AlertDialogTitle>
+            Are you sure you want to sign out?
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            You will be logged out of your account and will need to sign in again to access the application.
+            You will be logged out of your account and will need to sign in
+            again to access the application.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

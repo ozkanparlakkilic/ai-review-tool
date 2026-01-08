@@ -1,6 +1,12 @@
 "use client";
 
-import { SearchIcon, ChevronRight, CornerDownLeft, Gauge, LayoutDashboard } from "lucide-react";
+import {
+  SearchIcon,
+  ChevronRight,
+  CornerDownLeft,
+  Gauge,
+  LayoutDashboard,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSearch } from "@/contexts/search-provider";
 import { Button } from "@/components/ui/button";
@@ -41,7 +47,10 @@ const searchDescriptions: Record<string, string> = {
   Insights: "View performance metrics and review trends",
 };
 
-export function CommandSearch({ className = "", placeholder }: CommandSearchProps) {
+export function CommandSearch({
+  className = "",
+  placeholder,
+}: CommandSearchProps) {
   const { open, setOpen } = useSearch();
   const router = useRouter();
   const [selectedUrl, setSelectedUrl] = useState<string | null>(null);
@@ -59,7 +68,6 @@ export function CommandSearch({ className = "", placeholder }: CommandSearchProp
       setSelectedUrl(null);
     }
   }, [selectedUrl, setOpen, router]);
-
 
   useEffect(() => {
     if (!open) return;
