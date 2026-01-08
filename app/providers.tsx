@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryProvider } from "@/shared/providers/query-provider";
+import { SessionProvider } from "next-auth/react";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [mswReady, setMswReady] = useState(false);
@@ -26,9 +27,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <QueryProvider>
-      {children}
-      <Toaster />
-    </QueryProvider>
+    <SessionProvider>
+      <QueryProvider>
+        {children}
+        <Toaster />
+      </QueryProvider>
+    </SessionProvider>
   );
 }

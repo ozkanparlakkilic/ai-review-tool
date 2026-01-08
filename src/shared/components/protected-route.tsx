@@ -1,0 +1,55 @@
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import { Role } from "@/shared/constants/roles";
+import { Skeleton } from "@/components/ui/skeleton";
+
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  allowedRoles?: Role[];
+}
+
+export function ProtectedRoute({
+  children,
+  allowedRoles,
+}: ProtectedRouteProps) {
+  const { isAuthenticated, isLoading, user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push("/login");
+    } else if (
+      !isLoading &&
+      isAuthenticated &&
+      allowedRoles &&
+      user &&
+      !allowedRoles.includes(user.role)
+    ) {
+      router.push("/");
+    }
+  }, [isLoading, isAuthenticated, user, allowedRoles, router]);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <div className="space-y-4">
+          <Skeleton className="h-12 w-[300px]" />
+          <Skeleton className="h-[400px] w-full max-w-4xl" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  if (allowedRoles && user && !allowedRoles.includes(user.role)) {
+    return null;
+  }
+
+  return <>{children}</>;
+}
