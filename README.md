@@ -6,12 +6,25 @@ A human-in-the-loop workflow application for reviewing AI-generated outputs.
 
 This milestone includes:
 
-- ✅ Next.js 15 App Router with TypeScript
+- ✅ Next.js 16 App Router with TypeScript
 - ✅ shadcn/ui component library + Tailwind CSS
 - ✅ MSW (Mock Service Worker) for API mocking
 - ✅ Review Queue page with filtering and search
 - ✅ Feature-based folder structure
 - ✅ 20 mock review items with mixed statuses
+- ✅ pnpm, Prettier, Husky, Docker, GitHub Actions
+
+## M2 - Review Detail & Actions Complete ✅
+
+This milestone includes:
+
+- ✅ Full review detail page with prompt and output display
+- ✅ Approve/Reject actions with persistence
+- ✅ Optional feedback form with validation
+- ✅ Real-time status updates and toast notifications
+- ✅ Copy-to-clipboard for model output
+- ✅ Loading states and error handling
+- ✅ MSW PATCH endpoint for updating reviews
 
 ## Features
 
@@ -23,10 +36,17 @@ This milestone includes:
 - **Empty State**: Helpful message when no results are found
 - **Navigation**: Click "Review" to view item details
 
-### Review Detail Page (Placeholder)
+### Review Detail Page
 
-- Shows the item ID
-- Back button to return to queue
+- **Prompt Display**: Read-only card showing user input
+- **Output Display**: Scrollable card with AI-generated response
+- **Copy Output**: One-click copy to clipboard
+- **Status Badge**: Current review status (updates in real-time)
+- **Feedback Form**: Optional textarea for review notes
+- **Approve/Reject**: Actions that persist via MSW PATCH
+- **Validation**: Reject requires minimum 5 characters feedback
+- **Loading States**: Skeleton components during fetch
+- **Error Handling**: Graceful 404 and error states
 
 ## Tech Stack
 
@@ -34,7 +54,7 @@ This milestone includes:
 - **Language**: TypeScript 5
 - **Runtime**: React 19
 - **Styling**: Tailwind CSS 4
-- **UI Components**: shadcn/ui (Button, Input, Table, Badge, Tabs, Sonner)
+- **UI Components**: shadcn/ui (Button, Input, Table, Badge, Tabs, Card, Textarea, Separator, Skeleton, Sonner)
 - **API Mocking**: MSW (Mock Service Worker)
 - **State Management**: React hooks (useState, useEffect, useCallback)
 - **Package Manager**: pnpm 9.15.4
@@ -46,45 +66,61 @@ This milestone includes:
 
 ```
 ai-review-tool/
-├── app/
+├── app/                         # Next.js App Router (routing layer)
 │   ├── layout.tsx              # Root layout with Providers
 │   ├── page.tsx                # Review Queue page
 │   ├── providers.tsx           # MSW initialization + Toaster
-│   └── review/[id]/page.tsx    # Review detail placeholder
-├── src/
-│   ├── features/
-│   │   └── review/
-│   │       └── queue/
-│   │           ├── components/
-│   │           │   ├── queue-header.tsx
-│   │           │   ├── review-table.tsx
-│   │           │   └── status-filter.tsx
-│   │           ├── hooks/
-│   │           │   └── useReviewQueue.ts
-│   │           ├── services/
-│   │           │   └── reviewItemsApi.ts
-│   │           ├── types.ts
-│   │           └── constants.ts
-│   ├── shared/
-│   │   ├── components/
-│   │   │   ├── app-shell.tsx
-│   │   │   └── empty-state.tsx
-│   │   ├── services/
-│   │   │   └── http.ts          # Fetch wrapper
-│   │   ├── types/
-│   │   │   └── index.ts
-│   │   └── constants/
-│   │       └── index.ts
-│   └── mocks/
-│       ├── handlers.ts           # MSW request handlers
-│       ├── browser.ts            # MSW worker setup
-│       └── data.ts               # Mock review items (20)
-├── components/ui/               # shadcn/ui components
-├── docs/
-│   └── COMMITS.md
-└── public/
-    └── mockServiceWorker.js     # MSW service worker
+│   └── review/[id]/page.tsx    # Review detail page
+└── src/                         # Business logic layer
+    ├── components/
+    │   └── ui/                  # shadcn/ui primitives
+    │       ├── badge.tsx
+    │       ├── button.tsx
+    │       ├── card.tsx
+    │       ├── input.tsx
+    │       ├── separator.tsx
+    │       ├── skeleton.tsx
+    │       ├── table.tsx
+    │       ├── tabs.tsx
+    │       ├── textarea.tsx
+    │       └── sonner.tsx
+    ├── features/
+    │   └── review/
+    │       ├── queue/           # Queue feature module
+    │       │   ├── components/
+    │       │   ├── hooks/
+    │       │   ├── services/
+    │       │   └── constants.ts
+    │       └── detail/          # Detail feature module
+    │           ├── components/
+    │           ├── hooks/
+    │           ├── services/
+    │           ├── types.ts
+    │           └── constants.ts
+    ├── shared/
+    │   ├── components/          # Shared business components
+    │   │   ├── app-shell.tsx
+    │   │   ├── empty-state.tsx
+    │   │   └── status-badge.tsx
+    │   ├── services/
+    │   │   └── http.ts
+    │   ├── types/
+    │   └── constants/
+    ├── lib/                     # Utility functions
+    │   └── utils.ts
+    └── mocks/                   # MSW handlers & data
+        ├── handlers.ts
+        ├── browser.ts
+        └── data.ts
 ```
+
+**Architecture Principles:**
+
+- `app/` - Thin routing layer (Next.js pages, layouts)
+- `src/` - Thick business layer (all logic, components, features)
+- `src/components/ui/` - Low-level UI primitives (shadcn)
+- `src/shared/components/` - Reusable business components
+- `src/features/` - Feature modules (queue, detail)
 
 ## Getting Started
 
@@ -179,6 +215,24 @@ Returns: Array of ReviewItem
 
 Returns: Single ReviewItem or 404
 
+### PATCH /api/review-items/:id
+
+Request body:
+
+```json
+{
+  "status": "APPROVED" | "REJECTED",
+  "feedback": "Optional feedback text"
+}
+```
+
+Response: Updated ReviewItem
+
+Errors:
+
+- 404 if not found
+- 400 if invalid status
+
 ## Data Model
 
 ```typescript
@@ -196,6 +250,8 @@ interface ReviewItem {
 
 ## Testing Checklist ✅
 
+### M1 - Review Queue
+
 - ✅ Review Queue page loads successfully
 - ✅ Mock data displays in table
 - ✅ Status filter switches between Pending/Approved/Rejected
@@ -204,6 +260,19 @@ interface ReviewItem {
 - ✅ Back button returns to queue
 - ✅ Empty state shows when no results
 - ✅ MSW intercepts API calls in development
+
+### M2 - Review Detail
+
+- ✅ Detail page displays prompt and output
+- ✅ Status badge shows current status
+- ✅ Copy button copies output to clipboard
+- ✅ Approve button updates status with feedback
+- ✅ Reject button validates feedback (min 5 chars)
+- ✅ Toast notifications on success/error
+- ✅ Status updates persist via MSW PATCH
+- ✅ Queue reflects updated status after navigation
+- ✅ Loading skeletons display during fetch
+- ✅ 404 and error states handled gracefully
 
 ## CI/CD Workflows
 
@@ -247,16 +316,19 @@ This project includes three GitHub Actions workflows:
 - `docker-compose.dev.yml` - Development compose setup
 - `lighthouserc.json` - Lighthouse CI configuration
 
-## Next Steps (M2/M3)
+## Next Steps (M3+)
 
 Future milestones will include:
 
-- TanStack Query for server state management
-- Full review detail page with approve/reject actions
-- API integration for persisting changes
-- Additional features and refinements
+- TanStack Query for server state management and caching
+- Real backend API integration (replacing MSW)
+- User authentication and authorization
+- Activity log and audit trail
+- Bulk actions (approve/reject multiple items)
+- Advanced filtering and sorting
 - E2E testing with Playwright
 - Monitoring and observability
+- Performance optimizations
 
 ## License
 

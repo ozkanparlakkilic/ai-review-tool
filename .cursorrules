@@ -21,23 +21,34 @@ This is a Next.js 16 application for human-in-the-loop AI output review workflow
 ### File Structure
 
 ```
-src/
+app/                   # Next.js App Router (routing layer only)
+├── layout.tsx         # Root layout
+├── page.tsx           # Route pages
+└── review/[id]/       # Dynamic routes
+
+src/                   # Business logic layer
+├── components/
+│   └── ui/            # shadcn/ui primitives (button, input, card)
 ├── features/          # Feature-based modules
 │   └── review/
-│       └── queue/
-│           ├── components/  # Feature-specific components
-│           ├── hooks/       # Custom hooks
-│           ├── services/    # API services
-│           └── constants.ts # Feature constants
+│       ├── queue/     # Queue feature
+│       │   ├── components/
+│       │   ├── hooks/
+│       │   ├── services/
+│       │   └── constants.ts
+│       └── detail/    # Detail feature
+│           ├── components/
+│           ├── hooks/
+│           ├── services/
+│           ├── types.ts
+│           └── constants.ts
 ├── shared/
-│   ├── components/   # Shared/reusable components
-│   ├── services/     # Shared services (HTTP client)
-│   ├── types/        # Global TypeScript types
-│   └── constants/    # Global constants
-└── mocks/            # MSW handlers and mock data
-
-app/                  # Next.js App Router pages
-components/ui/        # UI component library (shadcn/ui)
+│   ├── components/    # Shared business components
+│   ├── services/      # Shared services (HTTP client)
+│   ├── types/         # Global TypeScript types
+│   └── constants/     # Global constants
+├── lib/               # Utility functions (cn, helpers)
+└── mocks/             # MSW handlers and mock data
 ```
 
 ### Naming Conventions
@@ -59,11 +70,12 @@ components/ui/        # UI component library (shadcn/ui)
 ### Import Order
 
 1. External dependencies (React, Next.js, etc.)
-2. Internal shared modules (@/shared/\*)
-3. Feature modules (@/features/\*)
-4. UI components (@/components/ui/\*)
-5. Relative imports (./)
-6. Types (if not inline)
+2. UI primitives (@/components/ui/*)
+3. Shared modules (@/shared/*)
+4. Feature modules (@/features/*)
+5. Lib utilities (@/lib/*)
+6. Relative imports (./)
+7. Types (if not inline)
 
 ### TypeScript Rules
 
@@ -106,9 +118,13 @@ components/ui/        # UI component library (shadcn/ui)
 
 ## Best Practices
 
-- Feature-first organization: group by feature, not by file type
+- **Separation of Concerns**: `app/` for routing, `src/` for business logic
+- **Feature-first Organization**: Group by feature, not by file type
+- **Component Hierarchy**:
+  - `src/components/ui/` → Low-level primitives (button, input)
+  - `src/shared/components/` → Business components (status-badge, app-shell)
+  - `src/features/*/components/` → Feature-specific components
 - Shared code goes in `src/shared/`, feature-specific in `src/features/`
-- UI library components stay in `components/ui/`
 - Always use TypeScript - no implicit any
 - Prefer composition over inheritance
 - Write small, focused functions and components
