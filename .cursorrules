@@ -1,0 +1,132 @@
+# AI Review Tool - Cursor Rules
+
+## Project Overview
+
+This is a Next.js 16 application for human-in-the-loop AI output review workflow using TypeScript, React 19, and Tailwind CSS 4.
+
+## Tech Stack
+
+- **Framework**: Next.js 16.1 (App Router)
+- **Language**: TypeScript 5
+- **UI Library**: React 19.2
+- **Styling**: Tailwind CSS 4
+- **UI Components**: Radix UI primitives
+- **State Management**: React hooks
+- **API Mocking**: MSW (Mock Service Worker)
+- **Package Manager**: pnpm 9.15.4
+- **Code Quality**: ESLint, Prettier, Husky, lint-staged
+
+## Architecture Patterns
+
+### File Structure
+
+```
+src/
+├── features/          # Feature-based modules
+│   └── review/
+│       └── queue/
+│           ├── components/  # Feature-specific components
+│           ├── hooks/       # Custom hooks
+│           ├── services/    # API services
+│           └── constants.ts # Feature constants
+├── shared/
+│   ├── components/   # Shared/reusable components
+│   ├── services/     # Shared services (HTTP client)
+│   ├── types/        # Global TypeScript types
+│   └── constants/    # Global constants
+└── mocks/            # MSW handlers and mock data
+
+app/                  # Next.js App Router pages
+components/ui/        # UI component library (shadcn/ui)
+```
+
+### Naming Conventions
+
+- **Files**: kebab-case (e.g., `review-table.tsx`)
+- **Components**: PascalCase (e.g., `ReviewTable`)
+- **Hooks**: camelCase with `use` prefix (e.g., `useReviewQueue`)
+- **Types**: PascalCase (e.g., `ReviewItem`)
+- **Constants**: UPPER_SNAKE_CASE (e.g., `STATUS_LABELS`)
+
+### Component Guidelines
+
+- Use functional components with TypeScript
+- Prefer named exports for components
+- Use "use client" directive for client components
+- Co-locate component-specific types with the component
+- Keep components focused and single-responsibility
+
+### Import Order
+
+1. External dependencies (React, Next.js, etc.)
+2. Internal shared modules (@/shared/\*)
+3. Feature modules (@/features/\*)
+4. UI components (@/components/ui/\*)
+5. Relative imports (./)
+6. Types (if not inline)
+
+### TypeScript Rules
+
+- Always define explicit types for props
+- Use interfaces for object shapes, types for unions/primitives
+- Avoid `any` - use `unknown` if type is truly unknown
+- Export types that are used across multiple files from `shared/types`
+
+### Styling
+
+- Use Tailwind CSS utility classes
+- Follow mobile-first responsive design
+- Use `cn()` helper from `lib/utils` for conditional classes
+- Prefer Tailwind over custom CSS
+
+### State Management
+
+- Use React hooks (useState, useEffect, etc.)
+- Create custom hooks for complex state logic
+- Keep state as local as possible
+- Use callback hooks for memoization when needed
+
+### API Integration
+
+- Use the shared `http` service from `@/shared/services/http`
+- Define API functions in feature-specific `services/` directories
+- Handle errors consistently with HttpError class
+- Use MSW for development/testing
+
+### Code Quality
+
+- Run `pnpm format` before committing
+- Husky pre-commit hooks will auto-format staged files
+- Follow ESLint rules - no warnings in production
+- Write self-documenting code - avoid comments when possible
+- **NO COMMENTS POLICY**: Do not use `//` or `/* */` style comments in code
+  - Code should be self-explanatory through clear naming
+  - Only `#` comments allowed (for config files like .env, shell scripts)
+  - If logic is complex, refactor into smaller, well-named functions instead
+
+## Best Practices
+
+- Feature-first organization: group by feature, not by file type
+- Shared code goes in `src/shared/`, feature-specific in `src/features/`
+- UI library components stay in `components/ui/`
+- Always use TypeScript - no implicit any
+- Prefer composition over inheritance
+- Write small, focused functions and components
+- Use async/await over promise chains
+- Handle loading and error states in UI
+
+## Commands
+
+- `pnpm dev` - Start development server
+- `pnpm build` - Production build
+- `pnpm lint` - Run ESLint
+- `pnpm format` - Format code with Prettier
+- `pnpm format:check` - Check formatting without writing
+
+## When Adding New Features
+
+1. Create feature directory under `src/features/`
+2. Organize with components/, hooks/, services/, types.ts, constants.ts
+3. Export shared types to `src/shared/types/` if used across features
+4. Add API mocks to `src/mocks/handlers.ts` if needed
+5. Follow existing patterns and naming conventions
