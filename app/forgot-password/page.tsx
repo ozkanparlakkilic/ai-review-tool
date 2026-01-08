@@ -30,7 +30,7 @@ export default function ForgotPasswordPage() {
         </CardContent>
         <CardFooter>
           <p className="mx-auto px-8 text-center text-sm text-balance text-muted-foreground">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link
               href="/sign-up"
               className="underline underline-offset-4 hover:text-primary"

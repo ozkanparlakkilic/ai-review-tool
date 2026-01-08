@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Logo } from "@/assets/logo";
 import { cn } from "@/lib/utils";
 
@@ -28,12 +29,13 @@ export function AuthLayout({ children }: AuthLayoutProps) {
           "[&>img]:absolute [&>img]:top-[15%] [&>img]:left-20 [&>img]:h-full [&>img]:w-full [&>img]:object-cover [&>img]:object-top-left [&>img]:select-none"
         )}
       >
-        <img
+        <Image
           src="/auth.png"
           width={1024}
           height={1151}
           alt="Auth Background"
           className="object-cover rounded-xl shadow-2xl border"
+          priority
         />
       </div>
     </div>

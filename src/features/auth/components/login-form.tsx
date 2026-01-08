@@ -33,7 +33,7 @@ const formSchema = z.object({
     .min(7, "Password must be at least 7 characters long"),
 });
 
-interface LoginFormProps extends React.HTMLAttributes<HTMLFormElement> {}
+type LoginFormProps = React.HTMLAttributes<HTMLFormElement>;
 
 export function LoginForm({ className, ...props }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false);
@@ -67,7 +67,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
         router.push(callbackUrl);
         router.refresh();
       }
-    } catch (_error) {
+    } catch {
       toast.error("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);

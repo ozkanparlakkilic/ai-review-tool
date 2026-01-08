@@ -22,7 +22,7 @@ export default function LoginPage() {
           <CardTitle className="text-lg tracking-tight">Sign in</CardTitle>
           <CardDescription>
             Enter your email and password below to log into your account. <br />
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link
               href="/sign-up"
               className="underline underline-offset-4 hover:text-primary"

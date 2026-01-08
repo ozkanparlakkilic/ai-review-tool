@@ -30,7 +30,7 @@ export default function OtpPage() {
         </CardContent>
         <CardFooter>
           <p className="px-8 text-center text-sm text-muted-foreground">
-            Haven't received it?{" "}
+            Haven&apos;t received it?{" "}
             <Link
               href="/login"
               className="underline underline-offset-4 hover:text-primary"
