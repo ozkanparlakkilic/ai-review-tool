@@ -40,6 +40,18 @@ This milestone includes:
 - ✅ CI/CD with GitHub Actions
 - ✅ Dockerized development environment
 
+## M4 - Authentication & Authorization Complete ✅
+
+This milestone includes:
+
+- ✅ NextAuth.js (v4) integration with Credentials provider
+- ✅ Role-Based Access Control (RBAC) with `REVIEWER` and `ADMIN` roles
+- ✅ Secure route protection with `ProtectedRoute` component
+- ✅ Complete auth flows: Sign Up, Login, Forgot Password, OTP
+- ✅ Standardized error pages (401, 403, 404, 500, 503)
+- ✅ Modern Header redesign with `CommandSearch` (⌘K)
+- ✅ Redesigned Profile Dropdown with sign-out confirmation
+
 ## Features
 
 ### Review Queue
@@ -304,6 +316,15 @@ interface ReviewItem {
 - ✅ Sorting by columns works
 - ✅ TanStack Query caching and invalidation verified
 
+### M4 - Authentication & Authorization
+
+- ✅ Login/Logout flows work correctly
+- ✅ Sign Up, Forgot Password, and OTP flows verified
+- ✅ Role-based access (Reviewer vs Admin) verified
+- ✅ Protected routes redirect correctly
+- ✅ Command Search (⌘K) opens and navigates
+- ✅ Error pages (401, 403, 404, 500, 503) render correctly
+
 ## CI/CD Workflows
 
 This project includes three GitHub Actions workflows:
@@ -348,9 +369,8 @@ This project includes three GitHub Actions workflows:
 
 ## Next Steps
 
-- 🔐 Authentication & role-based authorization (Reviewer / Admin)
 - 🧾 Audit log & activity timeline with CSV export
-- 🧪 End-to-end testing with Playwright
+-  End-to-end testing with Playwright
 - 📡 Real backend API integration (replace MSW)
 - 📊 Monitoring & observability (Sentry)
 - ⚡ Performance optimizations (virtualization, profiling)
