@@ -1,6 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { mockReviewItems } from "./data";
 import { ReviewStatus } from "@/shared/types";
+import { DateRange } from "@/features/insights/types";
 
 export const handlers = [
   http.get("/api/review-items", ({ request }) => {
@@ -133,5 +134,102 @@ export const handlers = [
     };
 
     return HttpResponse.json(mockReviewItems[itemIndex]);
+  }),
+
+  http.get("/api/metrics", ({ request }) => {
+    const url = new URL(request.url);
+    const range = (url.searchParams.get("range") as DateRange) || "7d";
+
+    const now = new Date();
+    const cutoffDate = new Date();
+    if (range === "7d") {
+      cutoffDate.setDate(now.getDate() - 7);
+    } else if (range === "30d") {
+      cutoffDate.setDate(now.getDate() - 30);
+    } else {
+      cutoffDate.setFullYear(2000);
+    }
+
+    const total = mockReviewItems.length;
+    const pending = mockReviewItems.filter(
+      (item) => item.status === "PENDING"
+    ).length;
+    const approved = mockReviewItems.filter(
+      (item) => item.status === "APPROVED"
+    ).length;
+    const rejected = mockReviewItems.filter(
+      (item) => item.status === "REJECTED"
+    ).length;
+
+    const reviewedItems = mockReviewItems.filter(
+      (item) => item.reviewedAt && new Date(item.reviewedAt) >= cutoffDate
+    );
+
+    const approvalRate =
+      approved + rejected > 0
+        ? Math.round((approved / (approved + rejected)) * 100)
+        : 0;
+
+    let avgReviewMinutes: number | null = null;
+    if (reviewedItems.length > 0) {
+      const totalMinutes = reviewedItems.reduce((sum, item) => {
+        if (!item.reviewedAt) return sum;
+        const created = new Date(item.createdAt).getTime();
+        const reviewed = new Date(item.reviewedAt).getTime();
+        return sum + (reviewed - created) / 1000 / 60;
+      }, 0);
+      avgReviewMinutes = Math.round(totalMinutes / reviewedItems.length);
+    }
+
+    const dailyMap = new Map<
+      string,
+      { approved: number; rejected: number; pending: number }
+    >();
+
+    // Fill all days in range with zeros first
+    if (range !== "all") {
+      const daysToShow = range === "7d" ? 7 : 30;
+      for (let i = 0; i < daysToShow; i++) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split("T")[0];
+        dailyMap.set(dateStr, { approved: 0, rejected: 0, pending: 0 });
+      }
+    }
+
+    // Then populate with actual data
+    reviewedItems.forEach((item) => {
+      if (!item.reviewedAt) return;
+      const date = new Date(item.reviewedAt).toISOString().split("T")[0];
+
+      if (!dailyMap.has(date)) {
+        dailyMap.set(date, { approved: 0, rejected: 0, pending: 0 });
+      }
+
+      const day = dailyMap.get(date)!;
+      if (item.status === "APPROVED") day.approved++;
+      if (item.status === "REJECTED") day.rejected++;
+    });
+
+    const daily = Array.from(dailyMap.entries())
+      .map(([date, counts]) => ({
+        date,
+        ...counts,
+        reviewed: counts.approved + counts.rejected,
+      }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+
+    return HttpResponse.json({
+      range,
+      kpis: {
+        total,
+        pending,
+        approved,
+        rejected,
+        approvalRate,
+        avgReviewMinutes,
+      },
+      daily,
+    });
   }),
 ];
