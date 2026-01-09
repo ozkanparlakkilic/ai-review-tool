@@ -41,13 +41,11 @@ export function OtpForm({ className, ...props }: OtpFormProps) {
     defaultValues: { otp: "" },
   });
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const otp = form.watch("otp");
 
   function onSubmit() {
     setIsLoading(true);
 
-    // Mock verification
     setTimeout(() => {
       setIsLoading(false);
       toast.success("Code verified successfully!");

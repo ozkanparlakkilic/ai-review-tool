@@ -2,6 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ReviewItem, ReviewStatus } from "@/shared/types";
 import { updateReviewItem } from "../services/reviewDetailApi";
 import { queryKeys } from "@/shared/constants/queryKeys";
+import { activityLogService } from "@/features/audit-log/services/activity-log";
+import { ActivityAction } from "@/shared/types/activity-log";
 
 interface ReviewDecisionParams {
   id: string;
@@ -12,7 +14,7 @@ interface ReviewDecisionParams {
 export function useReviewDecision(itemId: string) {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: ({ status, feedback }: Omit<ReviewDecisionParams, "id">) =>
       updateReviewItem(itemId, { status, feedback }),
 
@@ -65,8 +67,17 @@ export function useReviewDecision(itemId: string) {
       queryClient.invalidateQueries({ queryKey: ["review-items"] });
     },
 
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       queryClient.setQueryData(queryKeys.reviewItem(itemId), data);
+
+      activityLogService.createLog({
+        action:
+          variables.status === "APPROVED"
+            ? ActivityAction.REVIEW_APPROVED
+            : ActivityAction.REVIEW_REJECTED,
+        targetId: itemId,
+        metadata: { feedback: variables.feedback },
+      });
     },
 
     onSettled: () => {
@@ -75,4 +86,12 @@ export function useReviewDecision(itemId: string) {
       queryClient.invalidateQueries({ queryKey: ["metrics"] });
     },
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }

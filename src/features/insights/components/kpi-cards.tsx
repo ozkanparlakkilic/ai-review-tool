@@ -9,6 +9,7 @@ import {
   TrendingUpIcon,
   TimerIcon,
 } from "lucide-react";
+import { formatPercentage, formatDuration } from "../utils/metrics-format";
 
 interface KPICardsProps {
   kpis: MetricsKPIs;
@@ -46,14 +47,14 @@ export function KPICards({ kpis }: KPICardsProps) {
     },
     {
       title: "Approval Rate",
-      value: `${kpis.approvalRate}%`,
+      value: formatPercentage(kpis.approvalRate),
       icon: TrendingUpIcon,
       color: "text-emerald-600",
       bgColor: "bg-emerald-50",
     },
     {
       title: "Avg Review Time",
-      value: kpis.avgReviewMinutes !== null ? `${kpis.avgReviewMinutes}m` : "—",
+      value: formatDuration(kpis.avgReviewMinutes),
       icon: TimerIcon,
       color: "text-purple-600",
       bgColor: "bg-purple-50",

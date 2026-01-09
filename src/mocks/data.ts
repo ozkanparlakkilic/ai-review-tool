@@ -1,4 +1,6 @@
 import { ReviewItem, ReviewStatus, Priority } from "@/shared/types";
+import { ActivityLog, ActivityAction } from "@/shared/types/activity-log";
+import { ROLES } from "@/shared/constants/roles";
 
 const PROMPTS = [
   "Explain quantum computing in simple terms",
@@ -56,3 +58,38 @@ export const mockReviewItems: ReviewItem[] = Array.from({ length: 50 }).map(
     };
   }
 );
+
+export const mockActivityLogs: ActivityLog[] = [
+  {
+    id: "log-1",
+    userId: "user-1",
+    userName: "Admin User",
+    userRole: ROLES.ADMIN,
+    action: ActivityAction.USER_LOGIN,
+    riskLevel: "LOW",
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+  },
+  {
+    id: "log-2",
+    userId: "user-2",
+    userName: "Reviewer User",
+    userRole: ROLES.REVIEWER,
+    action: ActivityAction.REVIEW_APPROVED,
+    targetId: "review-1",
+    riskLevel: "LOW",
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 1).toISOString(),
+  },
+  {
+    id: "log-3",
+    userId: "user-1",
+    userName: "Admin User",
+    userRole: ROLES.ADMIN,
+    action: ActivityAction.BULK_REJECT,
+    metadata: {
+      count: 5,
+      ids: ["review-2", "review-3", "review-4", "review-5", "review-6"],
+    },
+    riskLevel: "HIGH",
+    createdAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+  },
+];

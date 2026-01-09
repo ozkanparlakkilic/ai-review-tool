@@ -52,7 +52,6 @@ export function SignUpForm({
 
   function onSubmit() {
     setIsLoading(true);
-    // Mock registration
     setTimeout(() => {
       setIsLoading(false);
       toast.success("Account created successfully! Please sign in.");

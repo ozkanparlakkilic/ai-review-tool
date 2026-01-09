@@ -41,7 +41,6 @@ const PasswordInput = React.forwardRef<
         </span>
       </Button>
 
-      {/* hides browsers password toggles */}
       <style>{`
 					.hide-password-toggle::-ms-reveal,
 					.hide-password-toggle::-ms-clear {

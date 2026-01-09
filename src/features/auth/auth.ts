@@ -12,15 +12,12 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        // Mock authentication logic
-        // In a real app, this would call your backend API
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
 
         const { email, password } = credentials;
 
-        // Mock users
         if (email === "reviewer@test.com" && password === "password123") {
           return {
             id: "1",

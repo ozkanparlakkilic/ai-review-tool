@@ -16,9 +16,6 @@ export function ProtectedRoute({
 }: ProtectedRouteProps) {
   const { isAuthenticated, isLoading, user } = useAuth();
 
-  // Middleware handles the primary authentication check and redirection to /login.
-  // This component now only handles client-side role checks and loading states.
-
   if (isLoading) {
     return (
       <div className="flex h-screen w-full items-center justify-center">

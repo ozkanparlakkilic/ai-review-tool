@@ -1,5 +1,5 @@
 import { useSession } from "next-auth/react";
-import { ROLES } from "@/shared/constants/roles";
+import { isAdmin, isReviewer } from "../utils/role-guards";
 
 export function useAuth() {
   const { data: session, status } = useSession();
@@ -8,15 +8,15 @@ export function useAuth() {
   const isAuthenticated = status === "authenticated";
   const isLoading = status === "loading";
 
-  const isReviewer = user?.role === ROLES.REVIEWER;
-  const isAdmin = user?.role === ROLES.ADMIN;
+  const isReviewerUser = isReviewer(user?.role);
+  const isAdminUser = isAdmin(user?.role);
 
   return {
     session,
     user,
     isAuthenticated,
     isLoading,
-    isReviewer,
-    isAdmin,
+    isReviewer: isReviewerUser,
+    isAdmin: isAdminUser,
   };
 }

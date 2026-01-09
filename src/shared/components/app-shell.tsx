@@ -23,6 +23,7 @@ export function AppShell({ children }: AppShellProps) {
   const links = [
     { href: "/", label: "Review Queue", visible: true },
     { href: "/insights", label: "Insights", visible: isAdmin },
+    { href: "/audit-log", label: "Audit Log", visible: isAdmin },
   ];
 
   return (

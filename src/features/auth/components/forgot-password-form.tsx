@@ -41,7 +41,6 @@ export function ForgotPasswordForm({
     setIsLoading(true);
     const email = form.getValues("email");
 
-    // Mock sending email
     setTimeout(() => {
       setIsLoading(false);
       toast.success(`Reset link sent to ${email}`);

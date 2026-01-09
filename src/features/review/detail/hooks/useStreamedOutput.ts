@@ -1,5 +1,8 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { getStreamConfig } from "../services/reviewStreamApi";
+import { activityLogService } from "@/features/audit-log/services/activity-log";
+import { ActivityAction } from "@/shared/types/activity-log";
+import { StreamBuffer } from "../utils/stream-buffer";
 
 export function useStreamedOutput(itemId: string) {
   const [streamedText, setStreamedText] = useState("");
@@ -8,13 +11,13 @@ export function useStreamedOutput(itemId: string) {
   const [error, setError] = useState<Error | null>(null);
 
   const abortControllerRef = useRef<AbortController | null>(null);
-  const bufferRef = useRef<string>("");
+  const bufferRef = useRef<StreamBuffer>(new StreamBuffer());
   const flushIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const flushBuffer = useCallback(() => {
-    if (bufferRef.current) {
-      setStreamedText((prev) => prev + bufferRef.current);
-      bufferRef.current = "";
+    const content = bufferRef.current.flush();
+    if (content) {
+      setStreamedText((prev) => prev + content);
     }
   }, []);
 
@@ -23,7 +26,12 @@ export function useStreamedOutput(itemId: string) {
     setIsComplete(false);
     setError(null);
     setStreamedText("");
-    bufferRef.current = "";
+    bufferRef.current.flush();
+
+    activityLogService.createLog({
+      action: ActivityAction.STREAM_STARTED,
+      targetId: itemId,
+    });
 
     abortControllerRef.current = new AbortController();
 
@@ -40,7 +48,7 @@ export function useStreamedOutput(itemId: string) {
           break;
         }
 
-        bufferRef.current += chunks[i];
+        bufferRef.current.append(chunks[i]);
 
         await new Promise((resolve) => setTimeout(resolve, delayMs));
       }
@@ -61,10 +69,16 @@ export function useStreamedOutput(itemId: string) {
   }, [itemId, flushBuffer]);
 
   const cancelStreaming = useCallback(() => {
+    if (isStreaming) {
+      activityLogService.createLog({
+        action: ActivityAction.STREAM_CANCELLED,
+        targetId: itemId,
+      });
+    }
     abortControllerRef.current?.abort();
     flushBuffer();
     setIsStreaming(false);
-  }, [flushBuffer]);
+  }, [flushBuffer, isStreaming, itemId]);
 
   const reset = useCallback(() => {
     cancelStreaming();

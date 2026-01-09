@@ -22,6 +22,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/password-input";
 import Link from "next/link";
+import { activityLogService } from "@/features/audit-log/services/activity-log";
+import { ActivityAction } from "@/shared/types/activity-log";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -63,6 +65,10 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
       if (result?.error) {
         toast.error("Invalid credentials. Please try again.");
       } else {
+        await activityLogService.createLog({
+          action: ActivityAction.USER_LOGIN,
+        });
+
         toast.success("Welcome back!");
         router.push(callbackUrl);
         router.refresh();

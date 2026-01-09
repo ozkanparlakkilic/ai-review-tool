@@ -6,9 +6,9 @@ export default withAuth(
   function middleware(req) {
     const token = req.nextauth.token;
     const isInsightsPage = req.nextUrl.pathname.startsWith("/insights");
+    const isAuditLogPage = req.nextUrl.pathname.startsWith("/audit-log");
 
-    // Role-based access control for /insights
-    if (isInsightsPage && token?.role !== ROLES.ADMIN) {
+    if ((isInsightsPage || isAuditLogPage) && token?.role !== ROLES.ADMIN) {
       return NextResponse.rewrite(new URL("/forbidden", req.url));
     }
 
@@ -26,5 +26,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ["/", "/review/:path*", "/insights/:path*"],
+  matcher: ["/", "/review/:path*", "/insights/:path*", "/audit-log/:path*"],
 };

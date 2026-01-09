@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useStreamedOutput } from "../hooks/useStreamedOutput";
 import { StreamControls } from "./stream-controls";
+import { isNearBottom as checkNearBottom } from "../utils/auto-scroll";
 
 interface OutputPanelProps {
   output: string;
@@ -36,8 +37,7 @@ export function OutputPanel({ output, itemId }: OutputPanelProps) {
   const checkIfNearBottom = useCallback(() => {
     if (!containerRef.current) return true;
     const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-    const threshold = 50;
-    return scrollHeight - scrollTop - clientHeight < threshold;
+    return checkNearBottom(scrollTop, scrollHeight, clientHeight);
   }, []);
 
   const scrollToBottom = useCallback(() => {

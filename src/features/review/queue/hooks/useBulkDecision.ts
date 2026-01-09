@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ReviewItem, ReviewStatus } from "@/shared/types";
 import { patchBatchReviewItems } from "../services/reviewItemsApi";
+import { activityLogService } from "@/features/audit-log/services/activity-log";
+import { ActivityAction } from "@/shared/types/activity-log";
 
 interface BulkDecisionParams {
   ids: string[];
@@ -11,7 +13,7 @@ interface BulkDecisionParams {
 export function useBulkDecision() {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: ({ ids, status, feedback }: BulkDecisionParams) =>
       patchBatchReviewItems({ ids, status, feedback }),
 
@@ -56,9 +58,31 @@ export function useBulkDecision() {
       }
     },
 
+    onSuccess: (_data, variables) => {
+      activityLogService.createLog({
+        action:
+          variables.status === "APPROVED"
+            ? ActivityAction.BULK_APPROVE
+            : ActivityAction.BULK_REJECT,
+        metadata: {
+          count: variables.ids.length,
+          ids: variables.ids,
+          feedback: variables.feedback,
+        },
+      });
+    },
+
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["review-items"] });
       queryClient.invalidateQueries({ queryKey: ["metrics"] });
     },
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }

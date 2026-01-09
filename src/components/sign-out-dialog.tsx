@@ -12,6 +12,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { activityLogService } from "@/features/audit-log/services/activity-log";
+import { ActivityAction } from "@/shared/types/activity-log";
 
 interface SignOutDialogProps {
   open: boolean;
@@ -21,11 +23,16 @@ interface SignOutDialogProps {
 export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
   const pathname = usePathname();
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     const callbackUrl =
       pathname !== "/"
         ? `/login?callbackUrl=${encodeURIComponent(pathname)}`
         : "/login";
+
+    await activityLogService.createLog({
+      action: ActivityAction.USER_LOGOUT,
+    });
+
     signOut({ callbackUrl });
   };
   return (

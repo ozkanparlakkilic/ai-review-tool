@@ -1,7 +1,13 @@
 import { http, HttpResponse } from "msw";
-import { mockReviewItems } from "./data";
+import { mockReviewItems, mockActivityLogs } from "./data";
 import { ReviewStatus } from "@/shared/types";
 import { DateRange } from "@/features/insights/types";
+import {
+  ActivityLog,
+  ActivityAction,
+  RISK_LEVELS,
+} from "@/shared/types/activity-log";
+import { ROLES } from "@/shared/constants/roles";
 
 export const handlers = [
   http.get("/api/review-items", ({ request }) => {
@@ -186,7 +192,6 @@ export const handlers = [
       { approved: number; rejected: number; pending: number }
     >();
 
-    // Fill all days in range with zeros first
     if (range !== "all") {
       const daysToShow = range === "7d" ? 7 : 30;
       for (let i = 0; i < daysToShow; i++) {
@@ -197,7 +202,6 @@ export const handlers = [
       }
     }
 
-    // Then populate with actual data
     reviewedItems.forEach((item) => {
       if (!item.reviewedAt) return;
       const date = new Date(item.reviewedAt).toISOString().split("T")[0];
@@ -231,5 +235,63 @@ export const handlers = [
       },
       daily,
     });
+  }),
+
+  http.get("/api/activity-logs", ({ request }) => {
+    const url = new URL(request.url);
+    const action = url.searchParams.get("action");
+    const userRole = url.searchParams.get("userRole");
+    const riskLevel = url.searchParams.get("riskLevel");
+    const search = url.searchParams.get("search")?.toLowerCase();
+
+    let filtered = [...mockActivityLogs];
+
+    if (action) {
+      filtered = filtered.filter((log) => log.action === action);
+    }
+    if (userRole) {
+      filtered = filtered.filter((log) => log.userRole === userRole);
+    }
+    if (riskLevel) {
+      filtered = filtered.filter((log) => log.riskLevel === riskLevel);
+    }
+    if (search) {
+      filtered = filtered.filter(
+        (log) =>
+          log.userName.toLowerCase().includes(search) ||
+          log.targetId?.toLowerCase().includes(search) ||
+          log.action.toLowerCase().includes(search)
+      );
+    }
+
+    filtered.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+
+    return HttpResponse.json(filtered);
+  }),
+
+  http.post("/api/activity-logs", async ({ request }) => {
+    const body = (await request.json()) as {
+      action: ActivityAction;
+      targetId?: string;
+      metadata?: Record<string, any>;
+    };
+
+    const newLog: ActivityLog = {
+      id: `log-${mockActivityLogs.length + 1}`,
+      userId: "user-1",
+      userName: "Admin User",
+      userRole: ROLES.ADMIN,
+      action: body.action,
+      targetId: body.targetId,
+      metadata: body.metadata,
+      riskLevel: RISK_LEVELS[body.action],
+      createdAt: new Date().toISOString(),
+    };
+
+    mockActivityLogs.unshift(newLog);
+    return HttpResponse.json(newLog, { status: 201 });
   }),
 ];
