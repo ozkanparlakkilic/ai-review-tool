@@ -6,6 +6,7 @@ import {
   CornerDownLeft,
   Gauge,
   LayoutDashboard,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSearch } from "@/contexts/search-provider";
@@ -21,30 +22,41 @@ import {
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 import { Kbd } from "@/components/ui/kbd";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 
 interface CommandSearchProps {
   className?: string;
   placeholder?: string;
 }
 
-const navigationItems = [
+const allNavigationItems = [
   {
     title: "Review Queue",
     url: "/",
     icon: LayoutDashboard,
     keywords: ["review", "queue", "home", "dashboard", "items"],
+    adminOnly: false,
   },
   {
     title: "Insights",
     url: "/insights",
     icon: Gauge,
     keywords: ["insights", "analytics", "statistics", "charts", "data"],
+    adminOnly: true,
+  },
+  {
+    title: "Audit Log",
+    url: "/audit-log",
+    icon: FileText,
+    keywords: ["audit", "log", "activity", "history", "tracking"],
+    adminOnly: true,
   },
 ];
 
 const searchDescriptions: Record<string, string> = {
   "Review Queue": "View and process items waiting for review",
   Insights: "View performance metrics and review trends",
+  "Audit Log": "Track and audit all critical actions performed in the system",
 };
 
 export function CommandSearch({
@@ -53,9 +65,14 @@ export function CommandSearch({
 }: CommandSearchProps) {
   const { open, setOpen } = useSearch();
   const router = useRouter();
+  const { isAdmin } = useAuth();
   const [selectedUrl, setSelectedUrl] = useState<string | null>(null);
 
   const defaultPlaceholder = placeholder || "Search pages...";
+
+  const navigationItems = allNavigationItems.filter(
+    (item) => !item.adminOnly || isAdmin
+  );
 
   const handleSelect = (url: string) => {
     setSelectedUrl(url);
