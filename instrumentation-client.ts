@@ -9,24 +9,20 @@ if (typeof window !== "undefined" && Sentry.replayIntegration) {
   integrations.push(Sentry.replayIntegration());
 }
 
+const isProduction = process.env.NODE_ENV === "production";
+const sentryEnabled = process.env.SENTRY_ENABLED === "true" || isProduction;
+
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
   environment: process.env.NODE_ENV,
-  enabled: process.env.NODE_ENV === "production",
+  enabled: sentryEnabled,
   integrations,
-  tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
+  tracesSampleRate: isProduction ? 0.1 : 0.01,
   enableLogs: true,
-  replaysSessionSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
+  replaysSessionSampleRate: isProduction ? 0.1 : 0.01,
   replaysOnErrorSampleRate: 1.0,
-  sendDefaultPii: true,
-  debug: process.env.NODE_ENV === "development",
-  beforeSend(event, hint) {
-    if (process.env.NODE_ENV === "development") {
-      console.log("Sentry Client Event:", event);
-      return null;
-    }
-    return event;
-  },
+  sendDefaultPii: false,
+  debug: process.env.NODE_ENV === "development" && sentryEnabled,
 });
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
