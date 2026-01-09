@@ -52,6 +52,22 @@ This milestone includes:
 - ✅ Modern Header redesign with `CommandSearch` (⌘K)
 - ✅ Redesigned Profile Dropdown with sign-out confirmation
 
+## M5 - Testing & Audit Log Complete ✅
+
+This milestone includes:
+
+- ✅ Comprehensive test suite with Vitest (26 test files, 71 tests)
+- ✅ Unit tests for all features (hooks, utilities, services)
+- ✅ Integration tests for critical user flows
+- ✅ Test infrastructure setup (MSW, test utilities, mocks)
+- ✅ Audit log page with activity timeline
+- ✅ CSV export functionality for audit logs
+- ✅ Activity log grouping for bulk actions
+- ✅ Risk level calculation for audit entries
+- ✅ Admin-only access to audit log
+- ✅ Test isolation and cleanup mechanisms
+- ✅ CI/CD integration for automated testing
+
 ## Features
 
 ### Review Queue
@@ -93,8 +109,9 @@ This milestone includes:
 - **State Management**: React hooks + TanStack Query (Server State)
 - **Package Manager**: pnpm 9.15.4
 - **Code Quality**: ESLint, Prettier, Husky, lint-staged
+- **Testing**: Vitest, React Testing Library, MSW
 - **Containerization**: Docker + Docker Compose
-- **CI/CD**: GitHub Actions (Quality, Docker, Lighthouse)
+- **CI/CD**: GitHub Actions (Quality, Docker, Lighthouse, Tests)
 
 ## Project Structure
 
@@ -225,6 +242,9 @@ pnpm docker:down
 - `pnpm docker:down` - Stop Docker container
 - `pnpm docker:logs` - View Docker logs
 - `pnpm docker:dev` - Start development with Docker
+- `pnpm test` - Run all tests
+- `pnpm test:unit` - Run unit tests only
+- `pnpm test:integration` - Run integration tests only
 
 ### Development Notes
 
@@ -325,6 +345,19 @@ interface ReviewItem {
 - ✅ Command Search (⌘K) opens and navigates
 - ✅ Error pages (401, 403, 404, 500, 503) render correctly
 
+### M5 - Testing & Audit Log
+
+- ✅ All unit tests passing (14 test files)
+- ✅ All integration tests passing (7 test files)
+- ✅ Test infrastructure properly configured
+- ✅ Audit log page displays activity timeline
+- ✅ CSV export generates correct data
+- ✅ Activity log grouping works for bulk actions
+- ✅ Risk level calculation is accurate
+- ✅ Admin-only access enforced for audit log
+- ✅ Reviewer blocked from accessing audit log
+- ✅ Test isolation and cleanup working correctly
+
 ## CI/CD Workflows
 
 This project includes three GitHub Actions workflows:
@@ -353,6 +386,13 @@ This project includes three GitHub Actions workflows:
 - Generates Lighthouse reports
 - Uploads results as artifacts
 
+### 4. Tests (`tests.yml`)
+
+- Runs test suite with Vitest
+- Executes on push/PR to main/develop
+- Reports test coverage
+- Ensures all tests pass before merge
+
 ## Project Configuration Files
 
 - `.cursorrules` - AI assistant coding guidelines
@@ -369,7 +409,6 @@ This project includes three GitHub Actions workflows:
 
 ## Next Steps
 
-- 🧾 Audit log & activity timeline with CSV export
 - End-to-end testing with Playwright
 - 📡 Real backend API integration (replace MSW)
 - 📊 Monitoring & observability (Sentry)
