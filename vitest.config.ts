@@ -46,11 +46,7 @@ export default defineConfig({
       },
     },
     pool: "threads",
-    poolOptions: {
-      threads: {
-        singleThread: true,
-      },
-    },
+    maxWorkers: 1,
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html", "lcov"],
