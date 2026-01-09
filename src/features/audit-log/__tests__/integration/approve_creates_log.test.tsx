@@ -23,6 +23,7 @@ describe("approve_creates_log", () => {
 
   it(
     "Trigger approve mutation and assert log entry is created",
+    { timeout: 10000 },
     async () => {
       const user = userEvent.setup();
       let resolveLog!: (v: any) => void;
@@ -63,7 +64,6 @@ describe("approve_creates_log", () => {
 
       expect(logBody.action).toBe("REVIEW_APPROVED");
       expect(logBody.targetId).toBe("item-1");
-    },
-    { timeout: 10000 }
+    }
   );
 });
