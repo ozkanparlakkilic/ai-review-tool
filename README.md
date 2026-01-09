@@ -83,6 +83,21 @@ This milestone includes:
 - ✅ CI/CD integration for E2E tests
 - ✅ Test helpers for common operations (login/logout)
 
+## M7 - Monitoring & Observability Complete ✅
+
+This milestone includes:
+
+- ✅ Sentry integration for error tracking and monitoring
+- ✅ Client-side error capture with Replay integration
+- ✅ Server-side error tracking for Node.js runtime
+- ✅ Edge runtime error tracking
+- ✅ Production-optimized sampling rates (10% traces, 10% replays)
+- ✅ Development mode error logging (no events sent)
+- ✅ Global error boundary with Sentry exception capture
+- ✅ Route-level error handling with Sentry integration
+- ✅ Environment-based configuration (development vs production)
+- ✅ Source map upload configuration for better stack traces
+
 ## Features
 
 ### Review Queue
@@ -126,6 +141,7 @@ This milestone includes:
 - **Code Quality**: ESLint, Prettier, Husky, lint-staged
 - **Testing**: Vitest, React Testing Library, MSW, Playwright
 - **Test Coverage**: Vitest coverage (v8 provider) for unit/integration tests
+- **Monitoring**: Sentry for error tracking and performance monitoring
 - **Containerization**: Docker + Docker Compose
 - **CI/CD**: GitHub Actions (Quality, Docker, Lighthouse, Tests, E2E)
 
@@ -490,6 +506,29 @@ This project includes five GitHub Actions workflows:
 - Requires application build before running
 - Global setup for parallel user authentication (reviewer/admin)
 
+## Environment Variables
+
+Create a `.env.local` file in the root directory (see `.env.example` for template):
+
+### Required for Development
+
+```bash
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your-secret-key-here
+```
+
+### Required for Production
+
+```bash
+NEXT_PUBLIC_SENTRY_DSN=your-sentry-client-dsn
+SENTRY_DSN=your-sentry-server-dsn
+SENTRY_ORG=your-sentry-org
+SENTRY_PROJECT=your-sentry-project
+SENTRY_AUTH_TOKEN=your-sentry-auth-token  # For source map uploads
+```
+
+**Note**: Get your DSN from [Sentry Dashboard](https://sentry.io/settings/{org}/projects/{project}/keys/). The `SENTRY_AUTH_TOKEN` is automatically created in `.env.sentry-build-plugin` by Sentry wizard.
+
 ## Project Configuration Files
 
 - `.cursorrules` - AI assistant coding guidelines
@@ -506,11 +545,15 @@ This project includes five GitHub Actions workflows:
 - `playwright.config.ts` - Playwright E2E test configuration
 - `playwright.global-setup.ts` - Global setup for E2E authentication
 - `vitest.config.ts` - Vitest unit/integration test configuration with coverage
+- `instrumentation.ts` - Next.js instrumentation (loads Sentry server/edge configs)
+- `instrumentation-client.ts` - Sentry client-side initialization
+- `sentry.server.config.ts` - Sentry server-side configuration
+- `sentry.edge.config.ts` - Sentry edge runtime configuration
+- `next.config.ts` - Next.js configuration wrapped with Sentry build plugin
 
 ## Next Steps
 
 - 📡 Real backend API integration (replace MSW)
-- 📊 Monitoring & observability (Sentry)
 - ⚡ Performance optimizations (virtualization, profiling)
 - 📄 Full case study & architecture documentation
 - 🧪 Increase test coverage thresholds (currently 70% target)

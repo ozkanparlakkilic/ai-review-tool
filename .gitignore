@@ -34,9 +34,12 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
-!.env.example
+# env files
+.env
+.env.local
+.env.development
+.env.production
+.env.test
 
 # vercel
 .vercel
@@ -65,3 +68,6 @@ next-env.d.ts
 Thumbs.db
 .AppleDouble
 .LSOverride
+
+# Sentry Config File
+.env.sentry-build-plugin
