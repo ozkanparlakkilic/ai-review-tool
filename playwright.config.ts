@@ -2,15 +2,23 @@ import { defineConfig, devices } from "@playwright/test";
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 const BASE_URL = process.env.BASE_URL || `http://127.0.0.1:${PORT}`;
-const isCI = !!process.env.CI;
+const isCI = !!process.env.CI || process.env.CI === "true";
+
+const workers = isCI ? 4 : 1;
+
+if (process.env.CI) {
+  console.log(`[Playwright Config] CI detected: ${process.env.CI}`);
+  console.log(`[Playwright Config] isCI: ${isCI}`);
+  console.log(`[Playwright Config] Workers: ${workers}`);
+}
 
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: false,
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,
-  workers: 1,
-  timeout: isCI ? 120_000 : 60_000,
+  workers,
+  timeout: isCI ? 90_000 : 60_000,
   reporter: isCI
     ? "github"
     : [
