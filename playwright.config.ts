@@ -39,7 +39,7 @@ export default defineConfig({
   ],
   webServer: {
     command: isCI
-      ? `pnpm build && PORT=${PORT} node .next/standalone/server.js`
+      ? `sh -c 'pnpm build && cp -r public .next/standalone/ && mkdir -p .next/standalone/.next && cp -r .next/static .next/standalone/.next/ && cd .next/standalone && PORT=${PORT} node server.js'`
       : `pnpm dev -p ${PORT}`,
 
     url: BASE_URL,
