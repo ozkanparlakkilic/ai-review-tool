@@ -68,6 +68,21 @@ This milestone includes:
 - ✅ Test isolation and cleanup mechanisms
 - ✅ CI/CD integration for automated testing
 
+## M6 - End-to-End Testing Complete ✅
+
+This milestone includes:
+
+- ✅ Playwright E2E testing framework setup
+- ✅ Authentication flow tests (login/logout)
+- ✅ Role-based access control tests (reviewer vs admin)
+- ✅ Review queue tests (filtering, sorting, search)
+- ✅ Review detail tests (approve/reject flows)
+- ✅ Streaming output tests (start/cancel)
+- ✅ Bulk actions tests (multi-select, bulk reject)
+- ✅ Audit log tests (CSV export, filtering)
+- ✅ CI/CD integration for E2E tests
+- ✅ Test helpers for common operations (login/logout)
+
 ## Features
 
 ### Review Queue
@@ -109,9 +124,10 @@ This milestone includes:
 - **State Management**: React hooks + TanStack Query (Server State)
 - **Package Manager**: pnpm 9.15.4
 - **Code Quality**: ESLint, Prettier, Husky, lint-staged
-- **Testing**: Vitest, React Testing Library, MSW
+- **Testing**: Vitest, React Testing Library, MSW, Playwright
+- **Test Coverage**: Vitest coverage (v8 provider) for unit/integration tests
 - **Containerization**: Docker + Docker Compose
-- **CI/CD**: GitHub Actions (Quality, Docker, Lighthouse, Tests)
+- **CI/CD**: GitHub Actions (Quality, Docker, Lighthouse, Tests, E2E)
 
 ## Project Structure
 
@@ -245,6 +261,15 @@ pnpm docker:down
 - `pnpm test` - Run all tests
 - `pnpm test:unit` - Run unit tests only
 - `pnpm test:integration` - Run integration tests only
+- `pnpm test:e2e` - Run E2E tests with Playwright
+- `pnpm test:e2e:ui` - Run E2E tests with Playwright UI mode
+- `pnpm test:e2e:report` - Show E2E test report
+- `pnpm test:e2e:ci` - Run E2E tests in CI mode
+- `pnpm test:coverage:unit` - Run unit tests with coverage
+- `pnpm test:coverage:integration` - Run integration tests with coverage
+- `pnpm test:coverage:vitest` - Run all Vitest tests with coverage
+- `pnpm test:coverage:open` - Open coverage report in browser
+- `pnpm test:coverage:check` - Run coverage with strict thresholds
 
 ### Development Notes
 
@@ -358,9 +383,71 @@ interface ReviewItem {
 - ✅ Reviewer blocked from accessing audit log
 - ✅ Test isolation and cleanup working correctly
 
+### M6 - End-to-End Testing ✅
+
+- ✅ Playwright E2E testing framework setup
+- ✅ 49 E2E tests across 13 test files
+- ✅ Authentication flow tests (login/logout, reviewer/admin)
+- ✅ Role-based access control tests (RBAC)
+- ✅ Review queue tests (filtering, sorting, search, pagination)
+- ✅ Review detail tests (approve/reject with feedback)
+- ✅ Streaming output tests (start/cancel)
+- ✅ Bulk actions tests (multi-select approve/reject)
+- ✅ Audit log tests (CSV export, filtering, user search)
+- ✅ Command search tests (role-based navigation, keyboard shortcuts)
+- ✅ Form validation tests (login, feedback)
+- ✅ Error handling tests (404, network errors)
+- ✅ Complete user journey tests (queue → detail → approve/reject)
+- ✅ Global setup for parallel user authentication
+- ✅ CI/CD integration for E2E tests
+- ✅ Test coverage infrastructure (Vitest coverage for unit/integration)
+
+## Running Tests Locally
+
+### Running E2E Tests
+
+1. **Start the development server** (in one terminal):
+
+   ```bash
+   pnpm dev
+   ```
+
+2. **Run E2E tests** (in another terminal):
+
+   ```bash
+   pnpm test:e2e
+   ```
+
+3. **Run E2E tests with UI mode** (interactive):
+
+   ```bash
+   pnpm test:e2e:ui
+   ```
+
+4. **View test report**:
+   ```bash
+   pnpm test:e2e:report
+   ```
+
+**Note**: The Playwright config automatically starts the dev server if not already running. In CI, it builds and starts the production server.
+
+**E2E Test Coverage (49 tests, 13 files):**
+
+- Authentication flows (login/logout, reviewer/admin)
+- Role-based access control (RBAC) tests
+- Review queue (filtering, sorting, search, pagination)
+- Review detail (approve/reject with feedback)
+- Streaming output (start/cancel)
+- Bulk actions (multi-select approve/reject)
+- Audit log (CSV export, filtering, user search)
+- Command search (role-based navigation, keyboard shortcuts)
+- Form validation (login, feedback)
+- Error handling (404, network errors)
+- Complete user journeys (queue → detail → approve/reject)
+
 ## CI/CD Workflows
 
-This project includes three GitHub Actions workflows:
+This project includes five GitHub Actions workflows:
 
 ### 1. Quality (`quality.yml`)
 
@@ -393,6 +480,16 @@ This project includes three GitHub Actions workflows:
 - Reports test coverage
 - Ensures all tests pass before merge
 
+### 5. E2E Tests (`e2e.yml`)
+
+- Runs end-to-end tests with Playwright
+- Executes on push/PR to main/develop
+- Tests critical user flows (auth, roles, review queue/detail, streaming, bulk actions, audit log, command search)
+- 49 tests across 13 test files
+- Uploads test reports and traces as artifacts
+- Requires application build before running
+- Global setup for parallel user authentication (reviewer/admin)
+
 ## Project Configuration Files
 
 - `.cursorrules` - AI assistant coding guidelines
@@ -406,14 +503,17 @@ This project includes three GitHub Actions workflows:
 - `docker-compose.yml` - Production compose setup
 - `docker-compose.dev.yml` - Development compose setup
 - `lighthouserc.json` - Lighthouse CI configuration
+- `playwright.config.ts` - Playwright E2E test configuration
+- `playwright.global-setup.ts` - Global setup for E2E authentication
+- `vitest.config.ts` - Vitest unit/integration test configuration with coverage
 
 ## Next Steps
 
-- End-to-end testing with Playwright
 - 📡 Real backend API integration (replace MSW)
 - 📊 Monitoring & observability (Sentry)
 - ⚡ Performance optimizations (virtualization, profiling)
 - 📄 Full case study & architecture documentation
+- 🧪 Increase test coverage thresholds (currently 70% target)
 
 ## License
 
