@@ -10,6 +10,7 @@ export default defineConfig({
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,
   workers: 1,
+  timeout: isCI ? 120_000 : 60_000,
   reporter: isCI
     ? "github"
     : [
@@ -38,12 +39,12 @@ export default defineConfig({
   ],
   webServer: {
     command: isCI
-      ? `pnpm build && pnpm start -p ${PORT}`
+      ? `pnpm build && PORT=${PORT} node .next/standalone/server.js`
       : `pnpm dev -p ${PORT}`,
 
     url: BASE_URL,
     reuseExistingServer: !isCI,
-    timeout: 120_000,
+    timeout: 180_000,
     stdout: "pipe",
     stderr: "pipe",
   },
