@@ -65,13 +65,17 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
       if (result?.error) {
         toast.error("Invalid credentials. Please try again.");
       } else {
-        await activityLogService.createLog({
-          action: ActivityAction.USER_LOGIN,
-        });
-
         toast.success("Welcome back!");
         router.push(callbackUrl);
         router.refresh();
+
+        activityLogService
+          .createLog({
+            action: ActivityAction.USER_LOGIN,
+          })
+          .catch((error) => {
+            console.error("Failed to create activity log:", error);
+          });
       }
     } catch {
       toast.error("An error occurred. Please try again.");
@@ -119,7 +123,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
             </FormItem>
           )}
         />
-        <Button className="mt-2" disabled={isLoading}>
+        <Button type="submit" className="mt-2" disabled={isLoading}>
           {isLoading ? (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           ) : (
