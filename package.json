@@ -29,9 +29,7 @@
     "test:coverage:check": "vitest run --coverage --coverage.threshold.lines=70 --coverage.threshold.functions=70 --coverage.threshold.branches=65 --coverage.threshold.statements=70",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:report": "playwright show-report",
-    "test:e2e:ci": "playwright test --reporter=github",
-    "e2e:ci": "start-server-and-test start http://localhost:3000 test:e2e:ci"
+    "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

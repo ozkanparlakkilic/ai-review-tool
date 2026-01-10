@@ -38,7 +38,7 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Run E2E tests
-        run: pnpm test:e2e:ci
+        run: pnpm test:e2e
         env:
           CI: true
           PORT: 3000
