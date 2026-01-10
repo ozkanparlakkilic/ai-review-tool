@@ -277,10 +277,9 @@ pnpm docker:down
 - `pnpm test` - Run all tests
 - `pnpm test:unit` - Run unit tests only
 - `pnpm test:integration` - Run integration tests only
-- `pnpm test:e2e` - Run E2E tests with Playwright
+- `pnpm test:e2e` - Run E2E tests with Playwright (auto-detects CI/local environment)
 - `pnpm test:e2e:ui` - Run E2E tests with Playwright UI mode
 - `pnpm test:e2e:report` - Show E2E test report
-- `pnpm test:e2e:ci` - Run E2E tests in CI mode
 - `pnpm test:coverage:unit` - Run unit tests with coverage
 - `pnpm test:coverage:integration` - Run integration tests with coverage
 - `pnpm test:coverage:vitest` - Run all Vitest tests with coverage
