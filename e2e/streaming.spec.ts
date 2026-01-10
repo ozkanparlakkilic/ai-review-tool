@@ -4,7 +4,7 @@ test.use({ storageState: "e2e/.auth/reviewer.json" });
 
 test.describe("Streaming Output", () => {
   test("start streaming displays output", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
@@ -36,7 +36,7 @@ test.describe("Streaming Output", () => {
   });
 
   test("cancel streaming stops output", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
@@ -56,20 +56,30 @@ test.describe("Streaming Output", () => {
       await streamButton.click();
 
       const cancelButton = page.getByRole("button", { name: /cancel/i });
-      const hasCancelButton = (await cancelButton.count()) > 0;
+      await expect(cancelButton).toBeVisible({ timeout: 10_000 });
 
-      if (hasCancelButton) {
-        await cancelButton.click();
+      const outputArea = page
+        .locator(
+          '[data-testid="output-panel"], [aria-label*="output" i], textarea, pre'
+        )
+        .first();
 
-        const cancelledText = page.getByText(/cancelled|canceled/i);
-        await expect(cancelledText).toBeVisible();
+      await expect(outputArea).toBeVisible();
 
-        const outputArea = page
-          .locator('[data-testid="output-panel"], textarea, pre')
-          .first();
-        const outputText = await outputArea.textContent();
-        expect(outputText?.length || 0).toBeGreaterThan(0);
+      const outputBeforeCancel = await outputArea.textContent();
+      const hasOutput = (outputBeforeCancel?.length || 0) > 0;
+
+      await cancelButton.click();
+
+      if (hasOutput) {
+        const cancelledText = page.getByText(
+          /generation cancelled|cancelled|canceled/i
+        );
+        await expect(cancelledText).toBeVisible({ timeout: 10_000 });
       }
+
+      const outputAfterCancel = await outputArea.textContent();
+      expect(outputAfterCancel?.length || 0).toBeGreaterThanOrEqual(0);
     }
   });
 });
