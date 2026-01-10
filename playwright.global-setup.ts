@@ -41,7 +41,7 @@ async function authenticateUser(
 
   try {
     await page.goto("/login", {
-      waitUntil: "domcontentloaded",
+      waitUntil: "load",
       timeout: 30_000,
     });
 
@@ -54,10 +54,18 @@ async function authenticateUser(
 
     const submitButton = page.getByRole("button", { name: /sign in|login/i });
 
-    await Promise.all([
-      page.waitForURL(/\/($|\?)/, { timeout: 15_000 }),
-      submitButton.click(),
-    ]);
+    await submitButton.click();
+
+    await page.waitForURL(/\/($|\?)/, {
+      timeout: 30_000,
+    });
+
+    await page.waitForLoadState("load");
+
+    const heading = page.getByRole("heading", {
+      name: /review queue|reviews/i,
+    });
+    await expect(heading).toBeVisible({ timeout: 30_000 });
 
     const statePath = path.resolve(authDir, `${role}.json`);
     await context.storageState({ path: statePath });

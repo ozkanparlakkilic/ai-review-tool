@@ -4,13 +4,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 const BASE_URL = process.env.BASE_URL || `http://127.0.0.1:${PORT}`;
 const isCI = !!process.env.CI || process.env.CI === "true";
 
-const workers = isCI ? 4 : 1;
-
-if (process.env.CI) {
-  console.log(`[Playwright Config] CI detected: ${process.env.CI}`);
-  console.log(`[Playwright Config] isCI: ${isCI}`);
-  console.log(`[Playwright Config] Workers: ${workers}`);
-}
+const workers = 4;
 
 export default defineConfig({
   testDir: "./e2e",
@@ -20,7 +14,11 @@ export default defineConfig({
   workers,
   timeout: isCI ? 90_000 : 60_000,
   reporter: isCI
-    ? "github"
+    ? [
+        ["list"],
+        ["github"],
+        ["html", { open: "never", outputFolder: "playwright-report" }],
+      ]
     : [
         ["list"],
         ["html", { open: "never", outputFolder: "playwright-report" }],
