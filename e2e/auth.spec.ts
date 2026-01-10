@@ -9,18 +9,22 @@ const TEST_USERS = {
 async function loginAs(page: Page, role: keyof typeof TEST_USERS) {
   const user = TEST_USERS[role];
 
-  await page.goto("/login", { waitUntil: "domcontentloaded" });
+  await page.goto("/login");
 
-  await expect(page.getByLabel(/email/i)).toBeVisible({ timeout: 15000 });
+  const emailField = page.getByLabel(/email/i);
+  await expect(emailField).toBeVisible({ timeout: 15000 });
+  await emailField.fill(user.email);
 
-  await page.getByLabel(/email/i).fill(user.email);
-  await page.getByLabel(/password/i).fill(user.password);
+  const passwordField = page.getByLabel(/password/i);
+  await passwordField.fill(user.password);
 
-  await page.getByRole("button", { name: /sign in/i }).click();
+  const submitButton = page.getByRole("button", { name: /sign in|login/i });
+  await expect(submitButton).toBeEnabled();
 
-  await expect(page).not.toHaveURL(/\/login/);
-
-  await expect(page).toHaveURL(/\/($|\?)/);
+  await Promise.all([
+    page.waitForURL(/\/($|\?)/, { timeout: 30_000 }),
+    submitButton.click(),
+  ]);
 }
 
 async function logout(page: Page) {
