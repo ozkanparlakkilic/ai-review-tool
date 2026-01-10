@@ -4,7 +4,7 @@ test.use({ storageState: "e2e/.auth/admin.json" });
 
 test.describe("Audit Log", () => {
   test("displays audit log table", async ({ page }) => {
-    await page.goto("/audit-log", { waitUntil: "domcontentloaded" });
+    await page.goto("/audit-log");
 
     await expect(
       page.getByRole("heading", { name: /audit log/i })
@@ -13,7 +13,7 @@ test.describe("Audit Log", () => {
   });
 
   test("filters audit log by user search", async ({ page }) => {
-    await page.goto("/audit-log", { waitUntil: "domcontentloaded" });
+    await page.goto("/audit-log");
 
     const searchInput = page.getByPlaceholder(/search users/i);
     await expect(searchInput).toBeVisible();
@@ -23,7 +23,7 @@ test.describe("Audit Log", () => {
   });
 
   test("exports CSV", async ({ page }) => {
-    await page.goto("/audit-log", { waitUntil: "domcontentloaded" });
+    await page.goto("/audit-log");
 
     const exportButton = page.getByRole("button", {
       name: /export.*csv|download.*csv/i,
@@ -37,7 +37,7 @@ test.describe("Audit Log", () => {
   });
 
   test("approve action appears in audit log", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
@@ -65,7 +65,7 @@ test.describe("Audit Log", () => {
     const successMessage = page.getByText(/approved/i).first();
     await expect(successMessage).toBeVisible();
 
-    await page.goto("/audit-log", { waitUntil: "domcontentloaded" });
+    await page.goto("/audit-log");
 
     const auditTable = page.getByRole("table");
     await expect(auditTable).toBeVisible();
@@ -75,7 +75,7 @@ test.describe("Audit Log", () => {
   });
 
   test("tracks user login in audit log", async ({ page }) => {
-    await page.goto("/audit-log", { waitUntil: "domcontentloaded" });
+    await page.goto("/audit-log");
 
     const heading = page.getByRole("heading", { name: /audit log/i });
     await expect(heading).toBeVisible();

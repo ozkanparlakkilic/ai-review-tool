@@ -6,7 +6,7 @@ test.describe("Complete User Journey", () => {
   test("complete review workflow: queue → detail → approve → verify", async ({
     page,
   }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
@@ -44,7 +44,7 @@ test.describe("Complete User Journey", () => {
 
     await expect(page.getByText(/approved/i).first()).toBeVisible();
 
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const approvedStatusFilter = page
       .getByRole("button", { name: /status/i })
@@ -63,7 +63,7 @@ test.describe("Complete User Journey", () => {
   });
 
   test("reject workflow with feedback validation", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
@@ -99,7 +99,7 @@ test.describe("Complete User Journey", () => {
 
     await expect(page.getByText(/rejected/i).first()).toBeVisible();
 
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const rejectedStatusFilter = page
       .getByRole("button", { name: /status/i })
@@ -113,7 +113,7 @@ test.describe("Complete User Journey", () => {
   });
 
   test("search and filter workflow", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,

@@ -5,7 +5,7 @@ test.describe("RBAC", () => {
     test.use({ storageState: "e2e/.auth/reviewer.json" });
 
     test("cannot access audit log", async ({ page }) => {
-      await page.goto("/audit-log", { waitUntil: "domcontentloaded" });
+      await page.goto("/audit-log");
 
       await expect(page.getByRole("heading", { name: /^403$/ })).toBeVisible({
         timeout: 15000,
@@ -18,7 +18,7 @@ test.describe("RBAC", () => {
     });
 
     test("cannot access insights", async ({ page }) => {
-      await page.goto("/insights", { waitUntil: "domcontentloaded" });
+      await page.goto("/insights");
 
       await expect(page.getByRole("heading", { name: /^403$/ })).toBeVisible({
         timeout: 15000,
@@ -35,14 +35,14 @@ test.describe("RBAC", () => {
     test.use({ storageState: "e2e/.auth/admin.json" });
 
     test("can access audit log", async ({ page }) => {
-      await page.goto("/audit-log", { waitUntil: "domcontentloaded" });
+      await page.goto("/audit-log");
 
       const heading = page.getByRole("heading", { name: /audit log/i });
       await expect(heading).toBeVisible({ timeout: 15000 });
     });
 
     test("can access insights", async ({ page }) => {
-      await page.goto("/insights", { waitUntil: "domcontentloaded" });
+      await page.goto("/insights");
 
       const heading = page.getByRole("heading", { name: /insights/i });
       await expect(heading).toBeVisible({ timeout: 15000 });

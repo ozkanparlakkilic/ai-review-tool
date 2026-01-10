@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Form Validation", () => {
   test("login form validates email format", async ({ page }) => {
-    await page.goto("/login", { waitUntil: "domcontentloaded" });
+    await page.goto("/login");
 
     const emailInput = page.getByLabel(/email/i);
     const passwordInput = page.getByLabel(/password/i);
@@ -19,7 +19,7 @@ test.describe("Form Validation", () => {
   });
 
   test("login form has required fields", async ({ page }) => {
-    await page.goto("/login", { waitUntil: "domcontentloaded" });
+    await page.goto("/login");
 
     await expect(page.getByLabel(/email/i)).toBeVisible();
     await expect(page.getByLabel(/password/i)).toBeVisible();
@@ -33,7 +33,7 @@ test.describe("Feedback Validation", () => {
   test.use({ storageState: "e2e/.auth/reviewer.json" });
 
   test("feedback field exists on review page", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
@@ -62,7 +62,7 @@ test.describe("Feedback Validation", () => {
   });
 
   test("can fill feedback and see reject button", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,

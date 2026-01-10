@@ -4,7 +4,7 @@ test.use({ storageState: "e2e/.auth/admin.json" });
 
 test.describe("Insights Dashboard", () => {
   test("displays KPI cards and metrics", async ({ page }) => {
-    await page.goto("/insights", { waitUntil: "domcontentloaded" });
+    await page.goto("/insights");
 
     await expect(
       page.getByRole("heading", { name: /insights|dashboard/i })
@@ -15,7 +15,7 @@ test.describe("Insights Dashboard", () => {
   });
 
   test("renders charts and visualizations", async ({ page }) => {
-    await page.goto("/insights", { waitUntil: "domcontentloaded" });
+    await page.goto("/insights");
 
     const heading = page.getByRole("heading", { name: /insights|dashboard/i });
     await expect(heading).toBeVisible();
@@ -25,7 +25,7 @@ test.describe("Insights Dashboard", () => {
   });
 
   test("date range picker changes data", async ({ page }) => {
-    await page.goto("/insights", { waitUntil: "domcontentloaded" });
+    await page.goto("/insights");
 
     const heading = page.getByRole("heading", { name: /insights|dashboard/i });
     await expect(heading).toBeVisible();
@@ -45,7 +45,7 @@ test.describe("Insights Dashboard", () => {
   });
 
   test("displays status distribution", async ({ page }) => {
-    await page.goto("/insights", { waitUntil: "domcontentloaded" });
+    await page.goto("/insights");
 
     const heading = page.getByRole("heading", { name: /insights|dashboard/i });
     await expect(heading).toBeVisible();
@@ -66,7 +66,7 @@ test.describe("Insights Dashboard", () => {
   });
 
   test("shows review trends over time", async ({ page }) => {
-    await page.goto("/insights", { waitUntil: "domcontentloaded" });
+    await page.goto("/insights");
 
     const heading = page.getByRole("heading", { name: /insights|dashboard/i });
     await expect(heading).toBeVisible();

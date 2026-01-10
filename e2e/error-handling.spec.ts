@@ -4,9 +4,7 @@ test.use({ storageState: "e2e/.auth/reviewer.json" });
 
 test.describe("Error Handling", () => {
   test("handles non-existent review gracefully", async ({ page }) => {
-    await page.goto("/review/nonexistent-id-12345", {
-      waitUntil: "domcontentloaded",
-    });
+    await page.goto("/review/nonexistent-id-12345");
 
     await expect(
       page.getByText(/review not found|error loading|doesn't exist/i)
@@ -15,7 +13,7 @@ test.describe("Error Handling", () => {
   });
 
   test("feedback field exists on review detail page", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
@@ -37,7 +35,7 @@ test.describe("Error Handling", () => {
 
   test("handles network timeout gracefully", async ({ page }) => {
     await page.route("**/api/review-items", (route) => route.abort());
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     await expect(page.getByText(/error|failed|timeout/i).first())
       .toBeVisible({ timeout: 5000 })

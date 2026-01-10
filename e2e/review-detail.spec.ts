@@ -4,7 +4,7 @@ test.use({ storageState: "e2e/.auth/reviewer.json" });
 
 test.describe("Review Detail", () => {
   test("opens detail", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     await expect(
       page.getByRole("heading", { name: /review queue/i })
@@ -22,7 +22,7 @@ test.describe("Review Detail", () => {
   });
 
   test("approve updates status", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
@@ -56,7 +56,7 @@ test.describe("Review Detail", () => {
   });
 
   test("reject updates status", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,

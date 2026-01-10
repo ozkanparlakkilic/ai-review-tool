@@ -6,7 +6,7 @@ test.describe("Bulk Actions", () => {
   test("bulk approve multiple reviews and verify status change", async ({
     page,
   }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
@@ -38,7 +38,7 @@ test.describe("Bulk Actions", () => {
 
     await expect(table).toBeVisible();
 
-    await page.reload({ waitUntil: "domcontentloaded" });
+    await page.reload();
 
     const statusFilterAfterReload = page
       .getByRole("button", { name: /status/i })
@@ -57,7 +57,7 @@ test.describe("Bulk Actions", () => {
   test("bulk reject with feedback and verify in audit log", async ({
     page,
   }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
@@ -82,7 +82,7 @@ test.describe("Bulk Actions", () => {
     await expect(bulkBtn).toBeVisible();
     await bulkBtn.click();
 
-    await page.goto("/audit-log", { waitUntil: "domcontentloaded" });
+    await page.goto("/audit-log");
 
     const auditHeading = page.getByRole("heading", { name: /audit log/i });
     await expect(auditHeading).toBeVisible();
@@ -95,7 +95,7 @@ test.describe("Bulk Actions", () => {
   });
 
   test("select all and bulk action", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,

@@ -4,7 +4,7 @@ test.use({ storageState: "e2e/.auth/reviewer.json" });
 
 test.describe("Pagination", () => {
   test("pagination controls work", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
@@ -30,7 +30,7 @@ test.describe("Pagination", () => {
   });
 
   test("table displays data", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
@@ -42,7 +42,7 @@ test.describe("Pagination", () => {
   });
 
   test("maintains search state after refresh", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,

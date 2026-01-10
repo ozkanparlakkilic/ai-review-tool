@@ -4,7 +4,7 @@ test.use({ storageState: "e2e/.auth/reviewer.json" });
 
 test.describe("Command Search", () => {
   test("search button is visible in header", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
@@ -16,7 +16,7 @@ test.describe("Command Search", () => {
   });
 
   test("opens with button click", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
@@ -34,7 +34,7 @@ test.describe("Command Search", () => {
   });
 
   test("opens with keyboard shortcut", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
@@ -51,7 +51,7 @@ test.describe("Command Search", () => {
   });
 
   test("closes on escape key", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
@@ -76,7 +76,7 @@ test.describe("Command Search - Role Based", () => {
   test("reviewer sees only review queue in command search", async ({
     page,
   }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const commandButton = page.getByRole("button", { name: /search pages/i });
     await commandButton.click();
@@ -103,7 +103,7 @@ test.describe("Command Search - Admin", () => {
   test("admin sees all navigation items in command search", async ({
     page,
   }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const commandButton = page.getByRole("button", { name: /search pages/i });
     await commandButton.click();

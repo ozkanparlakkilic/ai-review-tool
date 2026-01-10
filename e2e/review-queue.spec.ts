@@ -4,7 +4,7 @@ test.use({ storageState: "e2e/.auth/reviewer.json" });
 
 test.describe("Review Queue", () => {
   test("displays review queue with items", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
@@ -20,7 +20,7 @@ test.describe("Review Queue", () => {
   });
 
   test("filters by status", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
@@ -40,7 +40,7 @@ test.describe("Review Queue", () => {
   });
 
   test("sorts by column", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
@@ -57,7 +57,7 @@ test.describe("Review Queue", () => {
   });
 
   test("search filters results", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
