@@ -43,7 +43,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function StatusBreakdownChart({
+export const StatusBreakdownChart = React.memo(function StatusBreakdownChart({
   kpis,
   isLoading,
 }: StatusBreakdownChartProps) {
@@ -154,4 +154,4 @@ export function StatusBreakdownChart({
       </CardContent>
     </Card>
   );
-}
+});

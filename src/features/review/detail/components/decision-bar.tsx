@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { memo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
@@ -18,7 +18,7 @@ interface DecisionBarProps {
   disabled?: boolean;
 }
 
-export function DecisionBar({
+export const DecisionBar = memo(function DecisionBar({
   currentStatus,
   currentFeedback,
   onUpdate,
@@ -47,7 +47,10 @@ export function DecisionBar({
   };
 
   return (
-    <div className="bg-card space-y-4 rounded-lg border p-6">
+    <section
+      className="bg-card space-y-4 rounded-lg border p-6"
+      aria-label="Review decision"
+    >
       <FeedbackForm
         value={feedback}
         onChange={(value) => {
@@ -60,21 +63,27 @@ export function DecisionBar({
 
       <Separator />
 
-      <div className="flex items-center justify-end gap-3">
+      <div
+        className="flex items-center justify-end gap-3"
+        role="group"
+        aria-label="Review actions"
+      >
         <Button
           variant="outline"
           onClick={() => handleDecision("REJECTED")}
           disabled={saving || disabled || currentStatus === "REJECTED"}
+          aria-label="Reject this review"
         >
           {saving ? "Saving..." : "Reject"}
         </Button>
         <Button
           onClick={() => handleDecision("APPROVED")}
           disabled={saving || disabled || currentStatus === "APPROVED"}
+          aria-label="Approve this review"
         >
           {saving ? "Saving..." : "Approve"}
         </Button>
       </div>
-    </div>
+    </section>
   );
-}
+});

@@ -50,6 +50,8 @@ next-env.d.ts
 
 # lighthouse
 .lighthouseci
+lighthouse-report.json
+lighthouse-report.html
 
 # IDE
 .vscode/

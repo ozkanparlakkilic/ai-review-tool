@@ -35,7 +35,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function ReviewsTrendChart({
+export const ReviewsTrendChart = React.memo(function ReviewsTrendChart({
   daily,
   range,
   isLoading,
@@ -127,4 +127,4 @@ export function ReviewsTrendChart({
       </CardContent>
     </Card>
   );
-}
+});

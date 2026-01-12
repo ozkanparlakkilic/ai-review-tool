@@ -1,5 +1,8 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
+import { createRequire } from "module";
+
+const require = createRequire(import.meta.url);
 
 const nextConfig: NextConfig = {
   output: "standalone",
@@ -12,7 +15,14 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withSentryConfig(nextConfig, {
+const withBundleAnalyzer =
+  process.env.ANALYZE === "true"
+    ? require("@next/bundle-analyzer")({
+        enabled: true,
+      })
+    : (config: NextConfig) => config;
+
+const sentryConfig = withSentryConfig(nextConfig, {
   org: process.env.SENTRY_ORG || "ozkanparlakkilic",
   project: process.env.SENTRY_PROJECT || "ai-review-tool",
   silent: !process.env.CI,
@@ -24,3 +34,5 @@ export default withSentryConfig(nextConfig, {
     },
   },
 });
+
+export default withBundleAnalyzer(sentryConfig);

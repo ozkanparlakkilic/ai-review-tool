@@ -1,4 +1,4 @@
-import React from "react";
+import { memo } from "react";
 import {
   Card,
   CardContent,
@@ -11,9 +11,11 @@ interface PromptPanelProps {
   prompt: string;
 }
 
-export function PromptPanel({ prompt }: PromptPanelProps) {
+export const PromptPanel = memo(function PromptPanel({
+  prompt,
+}: PromptPanelProps) {
   return (
-    <Card>
+    <Card as="article">
       <CardHeader>
         <CardTitle>Prompt</CardTitle>
         <CardDescription>User input to AI model</CardDescription>
@@ -23,4 +25,4 @@ export function PromptPanel({ prompt }: PromptPanelProps) {
       </CardContent>
     </Card>
   );
-}
+});

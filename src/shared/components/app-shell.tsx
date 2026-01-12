@@ -54,11 +54,15 @@ export function AppShell({ children }: AppShellProps) {
               </span>
             </div>
 
-            <nav className="hidden items-center gap-1 lg:flex">
+            <nav
+              className="hidden items-center gap-1 lg:flex"
+              aria-label="Main navigation"
+            >
               {visibleLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
+                  aria-current={pathname === link.href ? "page" : undefined}
                   className={cn(
                     "inline-flex h-8 items-center justify-center rounded-md px-3 text-sm font-medium whitespace-nowrap transition-colors",
                     pathname === link.href
@@ -93,7 +97,13 @@ export function AppShell({ children }: AppShellProps) {
             </div>
           </Header>
         )}
-        <main className="container mx-auto px-4 py-8">{children}</main>
+        <main
+          className="container mx-auto px-4 py-8"
+          role="main"
+          aria-label="Main content"
+        >
+          {children}
+        </main>
       </div>
     </SearchProvider>
   );

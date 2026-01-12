@@ -10,6 +10,15 @@ interface StatusBadgeProps {
   status: ReviewStatus;
 }
 
-export function StatusBadge({ status }: StatusBadgeProps) {
-  return <Badge variant={STATUS_COLORS[status]}>{STATUS_LABELS[status]}</Badge>;
-}
+export const StatusBadge = React.memo(function StatusBadge({
+  status,
+}: StatusBadgeProps) {
+  return (
+    <Badge
+      variant={STATUS_COLORS[status]}
+      aria-label={`Review status: ${STATUS_LABELS[status]}`}
+    >
+      {STATUS_LABELS[status]}
+    </Badge>
+  );
+});
