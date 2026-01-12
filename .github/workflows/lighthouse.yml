@@ -58,7 +58,7 @@ jobs:
 
       - name: Run LHCI
         run: |
-          pnpm start &
+          node .next/standalone/server.js &
           sleep 10
           lhci autorun --config=lighthouserc.json
         env:
