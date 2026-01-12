@@ -16,6 +16,11 @@ export interface ActivityLogFilters {
   endDate?: string;
 }
 
+export interface ActivityLogsResponse {
+  items: ActivityLog[];
+  meta: { total: number };
+}
+
 export const activityLogService = {
   getLogs: async (filters?: ActivityLogFilters): Promise<ActivityLog[]> => {
     const params = new URLSearchParams();
@@ -25,9 +30,10 @@ export const activityLogService = {
       });
     }
     const queryString = params.toString();
-    return http<ActivityLog[]>(
+    const response = await http<ActivityLogsResponse>(
       `/activity-logs${queryString ? `?${queryString}` : ""}`
     );
+    return response?.items || [];
   },
 
   createLog: async (log: CreateActivityLogDto): Promise<ActivityLog> => {

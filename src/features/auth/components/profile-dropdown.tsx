@@ -18,12 +18,33 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SignOutDialog } from "@/components/sign-out-dialog";
 
-export function ProfileDropdown() {
+interface ProfileDropdownProps {
+  isLoading?: boolean;
+}
+
+export function ProfileDropdown({
+  isLoading = false,
+}: ProfileDropdownProps = {}) {
   const { user, isAuthenticated } = useAuth();
   const [open, setOpen] = useDialogState();
 
-  if (!isAuthenticated || !user) {
+  if (!isAuthenticated && !isLoading) {
     return null;
+  }
+
+  if (isLoading || !user) {
+    return (
+      <Button
+        variant="ghost"
+        className="relative h-8 w-8 rounded-full"
+        disabled
+        aria-label="Loading profile"
+      >
+        <Avatar className="h-8 w-8">
+          <AvatarFallback className="bg-muted" />
+        </Avatar>
+      </Button>
+    );
   }
 
   return (

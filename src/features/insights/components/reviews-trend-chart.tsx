@@ -16,10 +16,12 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import { DailyMetrics, DateRange } from "../types";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ReviewsTrendChartProps {
-  daily: DailyMetrics[];
+  daily?: DailyMetrics[];
   range: DateRange;
+  isLoading?: boolean;
 }
 
 const chartConfig = {
@@ -33,7 +35,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function ReviewsTrendChart({ daily, range }: ReviewsTrendChartProps) {
+export function ReviewsTrendChart({ daily, range, isLoading }: ReviewsTrendChartProps) {
   if (range === "all") {
     return (
       <Card>
@@ -50,7 +52,23 @@ export function ReviewsTrendChart({ daily, range }: ReviewsTrendChartProps) {
     );
   }
 
-  if (daily.length === 0) {
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Reviews Trend</CardTitle>
+          <CardDescription>Daily approved and rejected reviews</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[250px] w-full">
+            <Skeleton className="h-full w-full" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!daily || daily.length === 0) {
     return (
       <Card>
         <CardHeader>
@@ -82,7 +100,7 @@ export function ReviewsTrendChart({ daily, range }: ReviewsTrendChartProps) {
         <CardDescription>Daily approved and rejected reviews</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
+        <ChartContainer config={chartConfig} className="h-[250px] w-full aspect-none">
           <BarChart accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />
             <XAxis

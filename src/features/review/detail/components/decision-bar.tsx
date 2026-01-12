@@ -15,6 +15,7 @@ interface DecisionBarProps {
   currentFeedback?: string | null;
   onUpdate: (status: ReviewStatus, feedback?: string | null) => Promise<void>;
   saving: boolean;
+  disabled?: boolean;
 }
 
 export function DecisionBar({
@@ -22,6 +23,7 @@ export function DecisionBar({
   currentFeedback,
   onUpdate,
   saving,
+  disabled = false,
 }: DecisionBarProps) {
   const [feedback, setFeedback] = useState(currentFeedback || "");
   const [error, setError] = useState("");
@@ -53,7 +55,7 @@ export function DecisionBar({
           setError("");
         }}
         error={error}
-        disabled={saving}
+        disabled={saving || disabled}
       />
 
       <Separator />
@@ -62,13 +64,13 @@ export function DecisionBar({
         <Button
           variant="outline"
           onClick={() => handleDecision("REJECTED")}
-          disabled={saving || currentStatus === "REJECTED"}
+          disabled={saving || disabled || currentStatus === "REJECTED"}
         >
           {saving ? "Saving..." : "Reject"}
         </Button>
         <Button
           onClick={() => handleDecision("APPROVED")}
-          disabled={saving || currentStatus === "APPROVED"}
+          disabled={saving || disabled || currentStatus === "APPROVED"}
         >
           {saving ? "Saving..." : "Approve"}
         </Button>
