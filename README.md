@@ -2,6 +2,12 @@
 
 A modern human-in-the-loop workflow application for reviewing AI-generated outputs. Built with Next.js 16, featuring role-based access control, real-time streaming, comprehensive audit logging, and production-ready infrastructure.
 
+## 📚 Documentation
+
+- **[Case Study](CASE_STUDY.md)** - Complete project case study with implementation details, challenges, and results
+- **[Architecture](ARCHITECTURE.md)** - System architecture, design decisions, and technical deep-dives
+- **[README](README.md)** - Quick start guide and project overview (you are here)
+
 ## Features
 
 ### Core Functionality
