@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./utils/fixtures";
 
 test.describe("RBAC", () => {
   test.describe("Reviewer", () => {

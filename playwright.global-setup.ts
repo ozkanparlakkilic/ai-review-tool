@@ -1,6 +1,12 @@
 import { chromium, type FullConfig, expect } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
+import {
+  waitForDatabase,
+  setupDatabase,
+  seedDatabase,
+  disconnectDatabase,
+} from "./e2e/utils/db";
 
 const TEST_USERS = {
   reviewer: { email: "reviewer@test.com", password: "password123" },
@@ -84,12 +90,23 @@ export default async function globalSetup(config: FullConfig) {
   const baseURL = config.projects[0].use.baseURL as string;
   console.log(`[GlobalSetup] Base URL: ${baseURL}`);
 
+  console.log(`[GlobalSetup] Setting up database...`);
+  try {
+    await setupDatabase();
+    await seedDatabase();
+    console.log(`[GlobalSetup] Database setup completed`);
+  } catch (error) {
+    console.error(`[GlobalSetup] Database setup failed:`, error);
+    throw error;
+  }
+
   console.log(`[GlobalSetup] Waiting for web server to be ready...`);
   try {
     await waitForServer(baseURL);
     console.log(`[GlobalSetup] Web server is ready`);
   } catch (error) {
     console.error(`[GlobalSetup] Server wait failed:`, error);
+    await disconnectDatabase();
     throw error;
   }
 
@@ -114,6 +131,9 @@ export default async function globalSetup(config: FullConfig) {
     console.error(`\n[GlobalSetup] ========================================`);
     console.error(`[GlobalSetup] Authentication failed:`, error);
     console.error(`[GlobalSetup] ========================================\n`);
+    await disconnectDatabase();
     throw error;
   }
+
+  console.log(`[GlobalSetup] Global setup completed successfully\n`);
 }

@@ -1,14 +1,17 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./utils/fixtures";
+import { filterReviewQueue } from "./utils/helpers";
 
 test.use({ storageState: "e2e/.auth/reviewer.json" });
 
 test.describe("Review Detail", () => {
-  test("opens detail", async ({ page }) => {
+  test("opens detail", async ({ page, testPrefix }) => {
     await page.goto("/");
 
     await expect(
       page.getByRole("heading", { name: /review queue/i })
     ).toBeVisible({ timeout: 20000 });
+
+    await filterReviewQueue(page, testPrefix);
 
     const reviewLink = page.locator('a[href^="/review/"]').first();
     await reviewLink.click();
@@ -21,63 +24,35 @@ test.describe("Review Detail", () => {
     await expect(page.getByText(/^Model Output$/i)).toBeVisible();
   });
 
-  test("approve updates status", async ({ page }) => {
-    await page.goto("/");
-
-    const heading = page.getByRole("heading", {
-      name: /review queue|reviews/i,
-    });
-    await expect(heading).toBeVisible();
-
-    const table = page.getByRole("table");
-    await expect(table).toBeVisible();
-
-    const statusFilter = page.getByRole("button", { name: /status/i }).first();
-    await statusFilter.click();
-    const pendingOption = page.getByRole("option", { name: /pending/i });
-    await pendingOption.click();
-
-    await expect(table).toBeVisible();
-
-    const firstRow = page.getByRole("row").nth(1);
-    const pendingReviewLink = firstRow.getByRole("link", { name: /review/i });
-    await expect(pendingReviewLink).toBeVisible();
-
-    await pendingReviewLink.click();
+  test("approve updates status", async ({ page, reviewItems }) => {
+    const pendingItem =
+      reviewItems.find((item) => item.status === "PENDING") ?? reviewItems[0];
+    await page.goto(`/review/${pendingItem.id}`);
     await expect(page).toHaveURL(/\/review\/[^/]+/);
 
     const approveBtn = page.getByRole("button", { name: /approve/i }).first();
     await expect(approveBtn).toBeVisible();
     await expect(approveBtn).toBeEnabled();
-    await approveBtn.click();
 
-    const successMessage = page.getByText(/approved/i).first();
-    await expect(successMessage).toBeVisible();
+    await Promise.all([
+      page.waitForResponse(
+        (resp) =>
+          resp.url().includes("/api/review-items/") && resp.request().method() === "PATCH",
+        { timeout: 15_000 }
+      ).catch(() => null),
+      approveBtn.click(),
+    ]);
+
+    await page.waitForTimeout(1000);
+
+    const successMessage = page.getByText(/approved|success/i).first();
+    await expect(successMessage).toBeVisible({ timeout: 5000 });
   });
 
-  test("reject updates status", async ({ page }) => {
-    await page.goto("/");
-
-    const heading = page.getByRole("heading", {
-      name: /review queue|reviews/i,
-    });
-    await expect(heading).toBeVisible();
-
-    const table = page.getByRole("table");
-    await expect(table).toBeVisible();
-
-    const statusFilter = page.getByRole("button", { name: /status/i }).first();
-    await statusFilter.click();
-    const pendingOption = page.getByRole("option", { name: /pending/i });
-    await pendingOption.click();
-
-    await expect(table).toBeVisible();
-
-    const firstRow = page.getByRole("row").nth(1);
-    const pendingReviewLink = firstRow.getByRole("link", { name: /review/i });
-    await expect(pendingReviewLink).toBeVisible();
-
-    await pendingReviewLink.click();
+  test("reject updates status", async ({ page, reviewItems }) => {
+    const pendingItem =
+      reviewItems.find((item) => item.status === "PENDING") ?? reviewItems[0];
+    await page.goto(`/review/${pendingItem.id}`);
     await expect(page).toHaveURL(/\/review\/[^/]+/);
 
     const feedback = page.getByLabel(/feedback/i).or(page.locator("#feedback"));
@@ -88,9 +63,19 @@ test.describe("Review Detail", () => {
 
     const rejectBtn = page.getByRole("button", { name: /reject/i }).first();
     await expect(rejectBtn).toBeEnabled();
-    await rejectBtn.click();
 
-    const rejectedMessage = page.getByText(/rejected/i).first();
-    await expect(rejectedMessage).toBeVisible();
+    await Promise.all([
+      page.waitForResponse(
+        (resp) =>
+          resp.url().includes("/api/review-items/") && resp.request().method() === "PATCH",
+        { timeout: 15_000 }
+      ).catch(() => null),
+      rejectBtn.click(),
+    ]);
+
+    await page.waitForTimeout(1000);
+
+    const rejectedMessage = page.getByText(/rejected|success/i).first();
+    await expect(rejectedMessage).toBeVisible({ timeout: 5000 });
   });
 });

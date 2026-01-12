@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./utils/fixtures";
 import { Page } from "@playwright/test";
 
 const TEST_USERS = {
@@ -22,6 +22,14 @@ async function loginAs(page: Page, role: keyof typeof TEST_USERS) {
   await expect(submitButton).toBeEnabled();
 
   await Promise.all([
+    page
+      .waitForResponse(
+        (resp) =>
+          resp.url().includes("/api/auth") || resp.url().includes("/login"),
+        { timeout: 15_000 }
+      )
+      .then((resp) => resp.ok())
+      .catch(() => false),
     page.waitForURL(/\/($|\?)/, { timeout: 30_000 }),
     submitButton.click(),
   ]);

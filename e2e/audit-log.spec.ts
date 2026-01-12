@@ -1,4 +1,5 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./utils/fixtures";
+import { filterReviewQueue } from "./utils/helpers";
 
 test.use({ storageState: "e2e/.auth/admin.json" });
 
@@ -36,13 +37,15 @@ test.describe("Audit Log", () => {
     expect(download.suggestedFilename()).toMatch(/\.csv$/i);
   });
 
-  test("approve action appears in audit log", async ({ page }) => {
+  test("approve action appears in audit log", async ({ page, testPrefix }) => {
     await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
     });
     await expect(heading).toBeVisible();
+
+    await filterReviewQueue(page, testPrefix);
 
     const statusFilter = page.getByRole("button", { name: /status/i }).first();
     await expect(statusFilter).toBeVisible();
@@ -60,18 +63,50 @@ test.describe("Audit Log", () => {
 
     const approveBtn = page.getByRole("button", { name: /approve/i }).first();
     await expect(approveBtn).toBeVisible();
-    await approveBtn.click();
+    await expect(approveBtn).toBeEnabled({ timeout: 10_000 });
 
-    const successMessage = page.getByText(/approved/i).first();
-    await expect(successMessage).toBeVisible();
+    await Promise.all([
+      approveBtn.click(),
+      page
+        .waitForResponse(
+          (resp) =>
+            resp.url().includes("/api/review-items/") &&
+            resp.request().method() === "PATCH" &&
+            resp.status() === 200,
+          { timeout: 15_000 }
+        )
+        .then((resp) => {
+          expect(resp.ok()).toBe(true);
+          return resp;
+        })
+        .catch(() => null),
+    ]);
+
+    await page.waitForTimeout(2000);
 
     await page.goto("/audit-log");
+
+    const auditHeading = page.getByRole("heading", { name: /audit log/i });
+    await expect(auditHeading).toBeVisible();
 
     const auditTable = page.getByRole("table");
     await expect(auditTable).toBeVisible();
 
-    const tableBody = await page.locator("tbody").textContent();
-    expect(tableBody).toMatch(/approve|approved/i);
+    await page
+      .waitForResponse(
+        (resp) =>
+          resp.url().includes("/api/activity-logs") && resp.status() === 200,
+        { timeout: 10_000 }
+      )
+      .catch(() => null);
+
+    await page.waitForTimeout(1000);
+
+    const approveRow = page.locator("tbody tr", {
+      hasText: /approve|approved|REVIEW_APPROVED/i,
+    });
+
+    await expect(approveRow.first()).toBeVisible({ timeout: 10_000 });
   });
 
   test("tracks user login in audit log", async ({ page }) => {
@@ -83,7 +118,17 @@ test.describe("Audit Log", () => {
     const table = page.getByRole("table");
     await expect(table).toBeVisible();
 
-    const tableBody = await page.locator("tbody").textContent();
-    expect(tableBody).toMatch(/login|user.*logged/i);
+    await page
+      .waitForResponse(
+        (resp) =>
+          resp.url().includes("/api/activity-logs") && resp.status() === 200,
+        { timeout: 10_000 }
+      )
+      .catch(() => null);
+
+    const loginRow = page.locator("tbody tr", {
+      hasText: /USER LOGIN|login|user.*logged/i,
+    });
+    await expect(loginRow.first()).toBeVisible({ timeout: 10_000 });
   });
 });

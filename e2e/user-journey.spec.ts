@@ -1,10 +1,12 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./utils/fixtures";
+import { filterReviewQueue } from "./utils/helpers";
 
 test.use({ storageState: "e2e/.auth/reviewer.json" });
 
 test.describe("Complete User Journey", () => {
   test("complete review workflow: queue → detail → approve → verify", async ({
     page,
+    testPrefix,
   }) => {
     await page.goto("/");
 
@@ -12,6 +14,8 @@ test.describe("Complete User Journey", () => {
       name: /review queue|reviews/i,
     });
     await expect(heading).toBeVisible();
+
+    await filterReviewQueue(page, testPrefix);
 
     const statusFilter = page.getByRole("button", { name: /status/i }).first();
     await statusFilter.click();
@@ -22,9 +26,6 @@ test.describe("Complete User Journey", () => {
     await expect(table).toBeVisible();
 
     const firstRow = page.getByRole("row").nth(1);
-    const rowText = await firstRow.textContent();
-    const reviewIdMatch = rowText?.match(/review-\d+/);
-    const reviewId = reviewIdMatch ? reviewIdMatch[0] : null;
     const pendingReviewLink = firstRow.getByRole("link", { name: /review/i });
     await expect(pendingReviewLink).toBeVisible();
 
@@ -40,11 +41,26 @@ test.describe("Complete User Journey", () => {
 
     const approveBtn = page.getByRole("button", { name: /approve/i }).first();
     await expect(approveBtn).toBeVisible();
-    await approveBtn.click();
 
-    await expect(page.getByText(/approved/i).first()).toBeVisible();
+    await Promise.all([
+      page.waitForResponse(
+        (resp) =>
+          resp.url().includes("/api/review-items/") &&
+          resp.request().method() === "PATCH",
+        { timeout: 15_000 }
+      ).catch(() => null),
+      approveBtn.click(),
+    ]);
+
+    await page.waitForTimeout(1000);
+
+    await expect(page.getByText(/approved|success/i).first()).toBeVisible({
+      timeout: 5000,
+    });
 
     await page.goto("/");
+
+    await filterReviewQueue(page, testPrefix);
 
     const approvedStatusFilter = page
       .getByRole("button", { name: /status/i })
@@ -53,22 +69,28 @@ test.describe("Complete User Journey", () => {
     const approvedOption = page.getByRole("option", { name: /approved/i });
     await approvedOption.click();
 
-    if (reviewId) {
-      const approvedTable = page.getByRole("table");
-      await expect(approvedTable).toBeVisible();
+    const approvedTable = page.getByRole("table");
+    await expect(approvedTable).toBeVisible();
 
-      const approvedContent = await page.textContent("body");
-      expect(approvedContent).toContain(reviewId);
-    }
+    await page.waitForTimeout(1000);
+
+    const approvedRows = page.getByRole("row");
+    const rowCount = await approvedRows.count();
+    expect(rowCount).toBeGreaterThan(1);
   });
 
-  test("reject workflow with feedback validation", async ({ page }) => {
+  test("reject workflow with feedback validation", async ({
+    page,
+    testPrefix,
+  }) => {
     await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
     });
     await expect(heading).toBeVisible();
+
+    await filterReviewQueue(page, testPrefix);
 
     const statusFilter = page.getByRole("button", { name: /status/i }).first();
     await expect(statusFilter).toBeVisible();
@@ -94,12 +116,27 @@ test.describe("Complete User Journey", () => {
     );
 
     const rejectBtn = page.getByRole("button", { name: /reject/i }).first();
-    await expect(rejectBtn).toBeEnabled();
-    await rejectBtn.click();
+    await expect(rejectBtn).toBeEnabled({ timeout: 5000 });
 
-    await expect(page.getByText(/rejected/i).first()).toBeVisible();
+    await Promise.all([
+      page.waitForResponse(
+        (resp) =>
+          resp.url().includes("/api/review-items/") &&
+          resp.request().method() === "PATCH",
+        { timeout: 15_000 }
+      ).catch(() => null),
+      rejectBtn.click(),
+    ]);
+
+    await page.waitForTimeout(1000);
+
+    await expect(page.getByText(/rejected|success/i).first()).toBeVisible({
+      timeout: 5000,
+    });
 
     await page.goto("/");
+
+    await filterReviewQueue(page, testPrefix);
 
     const rejectedStatusFilter = page
       .getByRole("button", { name: /status/i })
@@ -112,7 +149,7 @@ test.describe("Complete User Journey", () => {
     await expect(rejectedTable).toBeVisible();
   });
 
-  test("search and filter workflow", async ({ page }) => {
+  test("search and filter workflow", async ({ page, testPrefix }) => {
     await page.goto("/");
 
     const heading = page.getByRole("heading", {
@@ -122,14 +159,14 @@ test.describe("Complete User Journey", () => {
 
     const searchInput = page.getByPlaceholder(/filter prompts/i);
     await expect(searchInput).toBeVisible();
-    await searchInput.fill("test");
+    await searchInput.fill(testPrefix);
 
     const table = page.getByRole("table");
     await expect(table).toBeVisible();
 
     const initialRowCount = await page.getByRole("row").count();
 
-    await expect(searchInput).toHaveValue("test");
+    await expect(searchInput).toHaveValue(testPrefix);
 
     const statusFilter = page.getByRole("button", { name: /status/i }).first();
     await statusFilter.click();

@@ -1,4 +1,5 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./utils/fixtures";
+import { filterReviewQueue } from "./utils/helpers";
 
 test.describe("Form Validation", () => {
   test("login form validates email format", async ({ page }) => {
@@ -32,13 +33,15 @@ test.describe("Form Validation", () => {
 test.describe("Feedback Validation", () => {
   test.use({ storageState: "e2e/.auth/reviewer.json" });
 
-  test("feedback field exists on review page", async ({ page }) => {
+  test("feedback field exists on review page", async ({ page, testPrefix }) => {
     await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
     });
     await expect(heading).toBeVisible();
+
+    await filterReviewQueue(page, testPrefix);
 
     const statusFilter = page.getByRole("button", { name: /status/i }).first();
     await expect(statusFilter).toBeVisible();
@@ -61,13 +64,18 @@ test.describe("Feedback Validation", () => {
     ).toBeVisible();
   });
 
-  test("can fill feedback and see reject button", async ({ page }) => {
+  test("can fill feedback and see reject button", async ({
+    page,
+    testPrefix,
+  }) => {
     await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
     });
     await expect(heading).toBeVisible();
+
+    await filterReviewQueue(page, testPrefix);
 
     const statusFilter = page.getByRole("button", { name: /status/i }).first();
     await expect(statusFilter).toBeVisible();

@@ -1,15 +1,18 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./utils/fixtures";
+import { filterReviewQueue } from "./utils/helpers";
 
 test.use({ storageState: "e2e/.auth/reviewer.json" });
 
 test.describe("Review Queue", () => {
-  test("displays review queue with items", async ({ page }) => {
+  test("displays review queue with items", async ({ page, testPrefix }) => {
     await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
     });
     await expect(heading).toBeVisible();
+
+    await filterReviewQueue(page, testPrefix);
 
     const table = page.getByRole("table");
     await expect(table).toBeVisible();
@@ -19,13 +22,15 @@ test.describe("Review Queue", () => {
     expect(count).toBeGreaterThanOrEqual(2);
   });
 
-  test("filters by status", async ({ page }) => {
+  test("filters by status", async ({ page, testPrefix }) => {
     await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
     });
     await expect(heading).toBeVisible();
+
+    await filterReviewQueue(page, testPrefix);
 
     const statusFilter = page.getByRole("button", { name: /status/i }).first();
     await expect(statusFilter).toBeVisible();
@@ -39,13 +44,15 @@ test.describe("Review Queue", () => {
     await expect(table).toBeVisible();
   });
 
-  test("sorts by column", async ({ page }) => {
+  test("sorts by column", async ({ page, testPrefix }) => {
     await page.goto("/");
 
     const heading = page.getByRole("heading", {
       name: /review queue|reviews/i,
     });
     await expect(heading).toBeVisible();
+
+    await filterReviewQueue(page, testPrefix);
 
     const table = page.getByRole("table");
     await expect(table).toBeVisible();
@@ -56,7 +63,7 @@ test.describe("Review Queue", () => {
     await expect(table).toBeVisible();
   });
 
-  test("search filters results", async ({ page }) => {
+  test("search filters results", async ({ page, testPrefix }) => {
     await page.goto("/");
 
     const heading = page.getByRole("heading", {
@@ -67,7 +74,7 @@ test.describe("Review Queue", () => {
     const searchInput = page.getByPlaceholder(/filter prompts/i);
     await expect(searchInput).toBeVisible();
 
-    await searchInput.fill("test");
-    await expect(searchInput).toHaveValue("test");
+    await searchInput.fill(testPrefix);
+    await expect(searchInput).toHaveValue(testPrefix);
   });
 });

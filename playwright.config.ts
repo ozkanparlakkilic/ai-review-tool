@@ -4,15 +4,15 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 const BASE_URL = process.env.BASE_URL || `http://127.0.0.1:${PORT}`;
 const isCI = !!process.env.CI || process.env.CI === "true";
 
-const workers = 4;
+const workers = isCI ? 4 : 2;
 
 export default defineConfig({
   testDir: "./e2e",
-  fullyParallel: false,
+  fullyParallel: true,
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,
   workers,
-  timeout: isCI ? 90_000 : 60_000,
+  timeout: isCI ? 90_000 : 30_000,
   reporter: isCI
     ? [
         ["list"],
@@ -24,17 +24,18 @@ export default defineConfig({
         ["html", { open: "never", outputFolder: "playwright-report" }],
       ],
   globalSetup: "./playwright.global-setup.ts",
+  globalTeardown: "./playwright.global-teardown.ts",
   expect: {
     timeout: 10_000,
   },
   use: {
     baseURL: BASE_URL,
 
-    navigationTimeout: 30_000,
-    actionTimeout: 10_000,
+    navigationTimeout: 15_000,
+    actionTimeout: 5_000,
 
     trace: isCI ? "retain-on-failure" : "off",
-    video: isCI ? "retain-on-failure" : "off",
+    video: "off",
     screenshot: "only-on-failure",
   },
   projects: [
@@ -45,13 +46,13 @@ export default defineConfig({
   ],
   webServer: {
     command: isCI
-      ? `sh -c 'pnpm build && cp -r public .next/standalone/ && mkdir -p .next/standalone/.next && cp -r .next/static .next/standalone/.next/ && cd .next/standalone && PORT=${PORT} node server.js'`
-      : `pnpm dev -p ${PORT}`,
+      ? `sh -c 'pnpm build && pnpm prisma:ci && cp -r public .next/standalone/ && mkdir -p .next/standalone/.next && cp -r .next/static .next/standalone/.next/ && cp -r node_modules/.prisma .next/standalone/node_modules/ 2>/dev/null || true && cd .next/standalone && cross-env DATABASE_URL="${process.env.DATABASE_URL}" PORT=${PORT} node server.js'`
+      : `dotenv -e .env.test -- pnpm dev -p ${PORT}`,
 
     url: BASE_URL,
     reuseExistingServer: !isCI,
     timeout: 180_000,
-    stdout: "pipe",
-    stderr: "pipe",
+    stdout: "ignore",
+    stderr: "ignore",
   },
 });
