@@ -39,7 +39,7 @@ export default defineConfig({
     ],
     environment: "happy-dom",
     globals: true,
-    setupFiles: "./src/test/setup/vitest.setup.ts",
+    setupFiles: ["./src/test/setup/vitest.setup.ts"],
     server: {
       deps: {
         inline: ["@tanstack/react-query", "react", "react-dom"],
@@ -47,6 +47,7 @@ export default defineConfig({
     },
     pool: "threads",
     maxWorkers: 1,
+    fileParallelism: false,
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html", "lcov"],
