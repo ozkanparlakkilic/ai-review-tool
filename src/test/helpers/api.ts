@@ -93,7 +93,6 @@ export async function assertJsonResponse<T = unknown>(
 }
 
 export function mockAuth(session: Session | null) {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { vi } = require("vitest");
 
   vi.mock("@/server/auth", () => ({
