@@ -35,7 +35,11 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function ReviewsTrendChart({ daily, range, isLoading }: ReviewsTrendChartProps) {
+export function ReviewsTrendChart({
+  daily,
+  range,
+  isLoading,
+}: ReviewsTrendChartProps) {
   if (range === "all") {
     return (
       <Card>
@@ -100,7 +104,10 @@ export function ReviewsTrendChart({ daily, range, isLoading }: ReviewsTrendChart
         <CardDescription>Daily approved and rejected reviews</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[250px] w-full aspect-none">
+        <ChartContainer
+          config={chartConfig}
+          className="aspect-none h-[250px] w-full"
+        >
           <BarChart accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />
             <XAxis

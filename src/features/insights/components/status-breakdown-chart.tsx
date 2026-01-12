@@ -43,7 +43,10 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function StatusBreakdownChart({ kpis, isLoading }: StatusBreakdownChartProps) {
+export function StatusBreakdownChart({
+  kpis,
+  isLoading,
+}: StatusBreakdownChartProps) {
   if (isLoading) {
     return (
       <Card className="flex flex-col">

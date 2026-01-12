@@ -53,7 +53,9 @@ describe("DecisionBar", () => {
       />
     );
 
-    const textarea = screen.getByPlaceholderText("Add notes about this review...");
+    const textarea = screen.getByPlaceholderText(
+      "Add notes about this review..."
+    );
     expect(textarea).toHaveValue("Existing feedback");
   });
 
@@ -89,7 +91,9 @@ describe("DecisionBar", () => {
       />
     );
 
-    const textarea = screen.getByPlaceholderText("Add notes about this review...");
+    const textarea = screen.getByPlaceholderText(
+      "Add notes about this review..."
+    );
     await user.type(textarea, "Rejection reason");
 
     const rejectButton = screen.getByText("Reject");
@@ -115,7 +119,9 @@ describe("DecisionBar", () => {
     await user.click(rejectButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/Feedback is required when rejecting/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Feedback is required when rejecting/)
+      ).toBeInTheDocument();
     });
 
     expect(mockOnUpdate).not.toHaveBeenCalled();
@@ -132,9 +138,11 @@ describe("DecisionBar", () => {
 
     const savingButtons = screen.getAllByText("Saving...");
     expect(savingButtons.length).toBeGreaterThan(0);
-    
+
     const buttons = screen.getAllByRole("button");
-    const saveButtons = buttons.filter((btn) => btn.textContent === "Saving...");
+    const saveButtons = buttons.filter(
+      (btn) => btn.textContent === "Saving..."
+    );
     saveButtons.forEach((btn) => {
       expect(btn).toBeDisabled();
     });
@@ -195,7 +203,9 @@ describe("DecisionBar", () => {
       />
     );
 
-    const textarea = screen.getByPlaceholderText("Add notes about this review...");
+    const textarea = screen.getByPlaceholderText(
+      "Add notes about this review..."
+    );
     await user.type(textarea, "  Trimmed feedback  ");
 
     const approveButton = screen.getByText("Approve");
@@ -226,4 +236,3 @@ describe("DecisionBar", () => {
     });
   });
 });
-

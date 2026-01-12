@@ -17,7 +17,7 @@ export function InsightsInner() {
     <AppShell>
       <div className="space-y-6">
         <InsightsHeader range={range} onRangeChange={setRange} />
-        
+
         {error && !loading ? (
           <div className="py-12 text-center">
             <h2 className="mb-2 text-2xl font-bold">Error Loading Insights</h2>
@@ -30,15 +30,15 @@ export function InsightsInner() {
             <KPICards kpis={metrics?.kpis} isLoading={loading} />
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
               <div className="lg:col-span-4">
-                <ReviewsTrendChart 
-                  daily={metrics?.daily} 
-                  range={range} 
+                <ReviewsTrendChart
+                  daily={metrics?.daily}
+                  range={range}
                   isLoading={loading}
                 />
               </div>
               <div className="lg:col-span-3">
-                <StatusBreakdownChart 
-                  kpis={metrics?.kpis} 
+                <StatusBreakdownChart
+                  kpis={metrics?.kpis}
                   isLoading={loading}
                 />
               </div>

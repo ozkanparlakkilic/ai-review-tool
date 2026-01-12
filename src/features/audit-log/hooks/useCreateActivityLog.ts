@@ -20,7 +20,8 @@ export function useCreateActivityLog({
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateActivityLogDto) => activityLogService.createLog(data),
+    mutationFn: (data: CreateActivityLogDto) =>
+      activityLogService.createLog(data),
     onSuccess: (data, variables, onMutateResult, context) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.activityLogs() });
       options?.onSuccess?.(data, variables, onMutateResult, context);

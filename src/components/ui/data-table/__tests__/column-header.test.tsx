@@ -11,17 +11,18 @@ const createMockColumn = (options: {
   clearSorting?: () => void;
   getCanHide?: () => boolean;
   toggleVisibility?: (visible: boolean) => void;
-}) => ({
-  id: "test-column",
-  toggleSorting: options.toggleSorting || vi.fn(),
-  getIsSorted: options.getIsSorted || vi.fn(() => false),
-  getCanSort: options.getCanSort || vi.fn(() => true),
-  getCanHide: options.getCanHide || vi.fn(() => true),
-  toggleVisibility: options.toggleVisibility || vi.fn(),
-  getIsVisible: vi.fn(() => true),
-  clearSorting: options.clearSorting || vi.fn(),
-  getToggleSortingHandler: vi.fn(() => vi.fn()),
-}) as unknown as Column<any, any>;
+}) =>
+  ({
+    id: "test-column",
+    toggleSorting: options.toggleSorting || vi.fn(),
+    getIsSorted: options.getIsSorted || vi.fn(() => false),
+    getCanSort: options.getCanSort || vi.fn(() => true),
+    getCanHide: options.getCanHide || vi.fn(() => true),
+    toggleVisibility: options.toggleVisibility || vi.fn(),
+    getIsVisible: vi.fn(() => true),
+    clearSorting: options.clearSorting || vi.fn(),
+    getToggleSortingHandler: vi.fn(() => vi.fn()),
+  }) as unknown as Column<any, any>;
 
 describe("DataTableColumnHeader", () => {
   beforeEach(() => {
@@ -342,4 +343,3 @@ describe("DataTableColumnHeader", () => {
     });
   });
 });
-

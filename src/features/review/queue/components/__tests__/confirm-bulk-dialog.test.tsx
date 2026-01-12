@@ -22,7 +22,9 @@ describe("ConfirmBulkDialog", () => {
       />
     );
 
-    expect(screen.queryByText("Approve selected items?")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Approve selected items?")
+    ).not.toBeInTheDocument();
   });
 
   it("should render approve dialog with correct content", () => {
@@ -37,7 +39,9 @@ describe("ConfirmBulkDialog", () => {
     );
 
     expect(screen.getByText("Approve selected items?")).toBeInTheDocument();
-    expect(screen.getByText("This will mark 5 items as Approved.")).toBeInTheDocument();
+    expect(
+      screen.getByText("This will mark 5 items as Approved.")
+    ).toBeInTheDocument();
     expect(screen.getByText("Cancel")).toBeInTheDocument();
     expect(screen.getByText("Confirm")).toBeInTheDocument();
   });
@@ -54,7 +58,9 @@ describe("ConfirmBulkDialog", () => {
     );
 
     expect(screen.getByText("Reject selected items?")).toBeInTheDocument();
-    expect(screen.getByText("This will mark 3 items as Rejected.")).toBeInTheDocument();
+    expect(
+      screen.getByText("This will mark 3 items as Rejected.")
+    ).toBeInTheDocument();
   });
 
   it("should display singular 'item' when count is 1", () => {
@@ -68,7 +74,9 @@ describe("ConfirmBulkDialog", () => {
       />
     );
 
-    expect(screen.getByText("This will mark 1 item as Approved.")).toBeInTheDocument();
+    expect(
+      screen.getByText("This will mark 1 item as Approved.")
+    ).toBeInTheDocument();
   });
 
   it("should display plural 'items' when count is greater than 1", () => {
@@ -82,7 +90,9 @@ describe("ConfirmBulkDialog", () => {
       />
     );
 
-    expect(screen.getByText("This will mark 10 items as Approved.")).toBeInTheDocument();
+    expect(
+      screen.getByText("This will mark 10 items as Approved.")
+    ).toBeInTheDocument();
   });
 
   it("should call onConfirm when Confirm button is clicked", async () => {
@@ -123,4 +133,3 @@ describe("ConfirmBulkDialog", () => {
     expect(mockOnOpenChange).toHaveBeenCalledWith(false);
   });
 });
-

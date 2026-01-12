@@ -5,9 +5,13 @@ import { ReviewItem } from "@/shared/types";
 import { formatDistanceToNow } from "date-fns";
 
 vi.mock("next/link", () => ({
-  default: ({ children, href }: { children: React.ReactNode; href: string }) => (
-    <a href={href}>{children}</a>
-  ),
+  default: ({
+    children,
+    href,
+  }: {
+    children: React.ReactNode;
+    href: string;
+  }) => <a href={href}>{children}</a>,
 }));
 
 vi.mock("date-fns", () => ({
@@ -16,7 +20,7 @@ vi.mock("date-fns", () => ({
     const now = new Date();
     const diffMs = now.getTime() - d.getTime();
     const diffMins = Math.floor(diffMs / 60000);
-    
+
     if (diffMins < 1) return "just now";
     if (diffMins < 60) return `${diffMins} minutes ago`;
     const diffHours = Math.floor(diffMins / 60);
@@ -32,15 +36,20 @@ const createMockTable = (options: {
   toggleAllPageRowsSelected?: () => void;
 }) => ({
   getIsAllPageRowsSelected: vi.fn(() => options.isAllPageRowsSelected || false),
-  getIsSomePageRowsSelected: vi.fn(() => options.isSomePageRowsSelected || false),
+  getIsSomePageRowsSelected: vi.fn(
+    () => options.isSomePageRowsSelected || false
+  ),
   toggleAllPageRowsSelected: options.toggleAllPageRowsSelected || vi.fn(),
 });
 
-const createMockRow = (item: ReviewItem, options: {
-  isSelected?: boolean;
-  canSelect?: boolean;
-  toggleSelected?: () => void;
-}) => ({
+const createMockRow = (
+  item: ReviewItem,
+  options: {
+    isSelected?: boolean;
+    canSelect?: boolean;
+    toggleSelected?: () => void;
+  }
+) => ({
   getValue: vi.fn((key: string) => {
     if (key === "prompt") return item.prompt;
     if (key === "status") return item.status;
@@ -104,7 +113,9 @@ describe("columns", () => {
     it("should call toggleAllPageRowsSelected when header checkbox is clicked", () => {
       const selectColumn = columns[0];
       const mockToggle = vi.fn();
-      const mockTable = createMockTable({ toggleAllPageRowsSelected: mockToggle });
+      const mockTable = createMockTable({
+        toggleAllPageRowsSelected: mockToggle,
+      });
 
       const Header = selectColumn.header as any;
       render(<Header table={mockTable} />);
@@ -244,7 +255,10 @@ describe("columns", () => {
 
     it("should return null for unknown status", () => {
       const statusColumn = columns[2];
-      const mockRow = createMockRow({ ...mockItem, status: "UNKNOWN" as any }, {});
+      const mockRow = createMockRow(
+        { ...mockItem, status: "UNKNOWN" as any },
+        {}
+      );
 
       const Cell = statusColumn.cell as any;
       const { container } = render(<Cell row={mockRow} />);
@@ -309,7 +323,10 @@ describe("columns", () => {
 
     it("should return null for unknown priority", () => {
       const priorityColumn = columns[3];
-      const mockRow = createMockRow({ ...mockItem, priority: "unknown" as any }, {});
+      const mockRow = createMockRow(
+        { ...mockItem, priority: "unknown" as any },
+        {}
+      );
 
       const Cell = priorityColumn.cell as any;
       const { container } = render(<Cell row={mockRow} />);
@@ -349,10 +366,9 @@ describe("columns", () => {
       const Cell = createdAtColumn.cell as any;
       render(<Cell row={mockRow} />);
 
-      expect(formatDistanceToNow).toHaveBeenCalledWith(
-        expect.any(Date),
-        { addSuffix: true }
-      );
+      expect(formatDistanceToNow).toHaveBeenCalledWith(expect.any(Date), {
+        addSuffix: true,
+      });
     });
 
     it("should render formatted date text", () => {

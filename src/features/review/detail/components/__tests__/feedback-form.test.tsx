@@ -20,7 +20,9 @@ describe("FeedbackForm", () => {
 
     render(<FeedbackForm value="Test feedback" onChange={mockOnChange} />);
 
-    const textarea = screen.getByPlaceholderText("Add notes about this review...");
+    const textarea = screen.getByPlaceholderText(
+      "Add notes about this review..."
+    );
     expect(textarea).toHaveValue("Test feedback");
   });
 
@@ -30,7 +32,9 @@ describe("FeedbackForm", () => {
 
     render(<FeedbackForm value="" onChange={mockOnChange} />);
 
-    const textarea = screen.getByPlaceholderText("Add notes about this review...");
+    const textarea = screen.getByPlaceholderText(
+      "Add notes about this review..."
+    );
     await user.type(textarea, "Test");
 
     expect(mockOnChange).toHaveBeenCalled();
@@ -64,7 +68,9 @@ describe("FeedbackForm", () => {
 
     render(<FeedbackForm value="" onChange={mockOnChange} disabled />);
 
-    const textarea = screen.getByPlaceholderText("Add notes about this review...");
+    const textarea = screen.getByPlaceholderText(
+      "Add notes about this review..."
+    );
     expect(textarea).toBeDisabled();
   });
 
@@ -73,7 +79,9 @@ describe("FeedbackForm", () => {
 
     render(<FeedbackForm value="" onChange={mockOnChange} disabled={false} />);
 
-    const textarea = screen.getByPlaceholderText("Add notes about this review...");
+    const textarea = screen.getByPlaceholderText(
+      "Add notes about this review..."
+    );
     expect(textarea).not.toBeDisabled();
   });
 
@@ -82,9 +90,10 @@ describe("FeedbackForm", () => {
 
     render(<FeedbackForm value="" onChange={mockOnChange} />);
 
-    const textarea = screen.getByPlaceholderText("Add notes about this review...");
+    const textarea = screen.getByPlaceholderText(
+      "Add notes about this review..."
+    );
     expect(textarea).toHaveAttribute("id", "feedback");
     expect(textarea).toHaveAttribute("rows", "4");
   });
 });
-

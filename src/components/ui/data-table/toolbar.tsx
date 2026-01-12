@@ -36,7 +36,8 @@ export function DataTableToolbar<TData>({
   const isServerSide = !!onSearchChange;
   const isFiltered = isServerSide
     ? !!searchValue || filters.some((f) => f.value)
-    : table.getState().columnFilters.length > 0 || table.getState().globalFilter;
+    : table.getState().columnFilters.length > 0 ||
+      table.getState().globalFilter;
 
   const handleReset = () => {
     if (isServerSide) {
@@ -54,7 +55,12 @@ export function DataTableToolbar<TData>({
         {searchKey ? (
           <Input
             placeholder={searchPlaceholder}
-            value={isServerSide ? searchValue ?? "" : (table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
+            value={
+              isServerSide
+                ? (searchValue ?? "")
+                : ((table.getColumn(searchKey)?.getFilterValue() as string) ??
+                  "")
+            }
             onChange={(event) => {
               if (isServerSide) {
                 onSearchChange?.(event.target.value);
@@ -67,7 +73,11 @@ export function DataTableToolbar<TData>({
         ) : (
           <Input
             placeholder={searchPlaceholder}
-            value={isServerSide ? searchValue ?? "" : (table.getState().globalFilter ?? "")}
+            value={
+              isServerSide
+                ? (searchValue ?? "")
+                : (table.getState().globalFilter ?? "")
+            }
             onChange={(event) => {
               if (isServerSide) {
                 onSearchChange?.(event.target.value);

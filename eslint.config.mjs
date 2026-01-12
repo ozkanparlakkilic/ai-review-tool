@@ -13,7 +13,12 @@ const eslintConfig = defineConfig([
     "public/mockServiceWorker.js",
   ]),
   {
-    files: ["**/__tests__/**/*", "**/*.test.ts", "**/*.test.tsx", "**/mocks/**/*"],
+    files: [
+      "**/__tests__/**/*",
+      "**/*.test.ts",
+      "**/*.test.tsx",
+      "**/mocks/**/*",
+    ],
     rules: {
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-unused-vars": "warn",

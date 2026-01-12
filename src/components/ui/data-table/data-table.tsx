@@ -137,7 +137,9 @@ export function DataTable<TData, TValue>({
   };
 
   const handlePaginationChange = (
-    updaterOrValue: PaginationState | ((old: PaginationState) => PaginationState)
+    updaterOrValue:
+      | PaginationState
+      | ((old: PaginationState) => PaginationState)
   ) => {
     if (isServerSide && onPaginationChange && externalPagination) {
       const newPagination =

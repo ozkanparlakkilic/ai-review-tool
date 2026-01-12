@@ -43,7 +43,7 @@ export function DataTableFacetedFilter<TData, TValue>({
 }: DataTableFacetedFilterProps<TData, TValue>) {
   const isServerSide = !!onChange;
   const facets = column?.getFacetedUniqueValues();
-  
+
   const selectedValues = React.useMemo(() => {
     if (isServerSide && value) {
       const values = multiple ? value.split(",").filter(Boolean) : [value];
@@ -122,7 +122,11 @@ export function DataTableFacetedFilter<TData, TValue>({
                           } else {
                             newValues.add(option.value);
                           }
-                          onChange(newValues.size > 0 ? Array.from(newValues).join(",") : undefined);
+                          onChange(
+                            newValues.size > 0
+                              ? Array.from(newValues).join(",")
+                              : undefined
+                          );
                         } else {
                           onChange(isSelected ? undefined : option.value);
                         }
@@ -139,7 +143,9 @@ export function DataTableFacetedFilter<TData, TValue>({
                             filterValues.length > 0 ? filterValues : undefined
                           );
                         } else {
-                          column?.setFilterValue(isSelected ? undefined : option.value);
+                          column?.setFilterValue(
+                            isSelected ? undefined : option.value
+                          );
                         }
                       }
                     }}

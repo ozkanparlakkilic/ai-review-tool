@@ -43,7 +43,9 @@ describe("SignUpForm", () => {
     await user.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/Please enter a valid email address/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Please enter a valid email address/)
+      ).toBeInTheDocument();
     });
   });
 
@@ -62,7 +64,9 @@ describe("SignUpForm", () => {
     await user.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/Password must be at least 7 characters long/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Password must be at least 7 characters long/)
+      ).toBeInTheDocument();
     });
   });
 
@@ -124,10 +128,13 @@ describe("SignUpForm", () => {
     const submitButton = screen.getByText("Create Account");
     await user.click(submitButton);
 
-    await waitFor(() => {
-      expect(screen.getByText("Creating Account...")).toBeInTheDocument();
-      expect(submitButton).toBeDisabled();
-    }, { timeout: 1000 });
+    await waitFor(
+      () => {
+        expect(screen.getByText("Creating Account...")).toBeInTheDocument();
+        expect(submitButton).toBeDisabled();
+      },
+      { timeout: 1000 }
+    );
   });
 
   it("should show success toast after successful submission", async () => {
@@ -175,12 +182,15 @@ describe("SignUpForm", () => {
     const submitButton = screen.getByText("Create Account");
     await user.click(submitButton);
 
-    await waitFor(() => {
-      const githubButton = screen.getByText("GitHub");
-      const facebookButton = screen.getByText("Facebook");
-      expect(githubButton).toBeDisabled();
-      expect(facebookButton).toBeDisabled();
-    }, { timeout: 1000 });
+    await waitFor(
+      () => {
+        const githubButton = screen.getByText("GitHub");
+        const facebookButton = screen.getByText("Facebook");
+        expect(githubButton).toBeDisabled();
+        expect(facebookButton).toBeDisabled();
+      },
+      { timeout: 1000 }
+    );
   });
 
   it("should apply custom className", () => {
@@ -190,4 +200,3 @@ describe("SignUpForm", () => {
     expect(form).toHaveClass("custom-class");
   });
 });
-

@@ -1,5 +1,8 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
-import { activityLogService, ActivityLogFilters } from "../services/activity-log";
+import {
+  activityLogService,
+  ActivityLogFilters,
+} from "../services/activity-log";
 import { ActivityLog } from "@/shared/types/activity-log";
 import { queryKeys } from "@/shared/constants/queryKeys";
 

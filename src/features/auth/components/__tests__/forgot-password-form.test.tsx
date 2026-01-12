@@ -3,7 +3,6 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ForgotPasswordForm } from "../forgot-password-form";
 
-
 vi.mock("sonner", () => ({
   toast: {
     success: vi.fn(),
@@ -28,7 +27,9 @@ describe("ForgotPasswordForm", () => {
     render(<ForgotPasswordForm />);
 
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("reviewer@test.com")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("reviewer@test.com")
+    ).toBeInTheDocument();
     expect(screen.getByText("Continue")).toBeInTheDocument();
   });
 
@@ -44,7 +45,9 @@ describe("ForgotPasswordForm", () => {
     await user.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/Please enter a valid email address/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Please enter a valid email address/)
+      ).toBeInTheDocument();
     });
   });
 
@@ -70,9 +73,12 @@ describe("ForgotPasswordForm", () => {
     const submitButton = screen.getByText("Continue");
     await user.click(submitButton);
 
-    await waitFor(() => {
-      expect(submitButton).toBeDisabled();
-    }, { timeout: 1000 });
+    await waitFor(
+      () => {
+        expect(submitButton).toBeDisabled();
+      },
+      { timeout: 1000 }
+    );
   });
 
   it("should navigate to /otp after successful submission", async () => {
@@ -108,7 +114,9 @@ describe("ForgotPasswordForm", () => {
 
     await waitFor(
       () => {
-        expect(toast.success).toHaveBeenCalledWith("Reset link sent to test@example.com");
+        expect(toast.success).toHaveBeenCalledWith(
+          "Reset link sent to test@example.com"
+        );
       },
       { timeout: 3000 }
     );
@@ -123,4 +131,3 @@ describe("ForgotPasswordForm", () => {
     expect(form).toHaveClass("custom-class");
   });
 });
-

@@ -3,7 +3,6 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { OtpForm } from "../otp-form";
 
-
 vi.mock("sonner", () => ({
   toast: {
     success: vi.fn(),
@@ -33,7 +32,9 @@ describe("OtpForm", () => {
   it("should render OTP input component", () => {
     const { container } = render(<OtpForm />);
 
-    const otpContainer = container.querySelector('[class*="flex items-center gap-2"]');
+    const otpContainer = container.querySelector(
+      '[class*="flex items-center gap-2"]'
+    );
     expect(otpContainer).toBeInTheDocument();
   });
 
@@ -54,12 +55,17 @@ describe("OtpForm", () => {
 
     await user.click(verifyButton);
 
-    await waitFor(() => {
-      const errorMessage = screen.queryByText(/Please enter the 6-digit code/);
-      if (errorMessage) {
-        expect(errorMessage).toBeInTheDocument();
-      }
-    }, { timeout: 1000 });
+    await waitFor(
+      () => {
+        const errorMessage = screen.queryByText(
+          /Please enter the 6-digit code/
+        );
+        if (errorMessage) {
+          expect(errorMessage).toBeInTheDocument();
+        }
+      },
+      { timeout: 1000 }
+    );
   });
 
   it("should show loading state when verifying", async () => {
@@ -78,4 +84,3 @@ describe("OtpForm", () => {
     expect(form).toHaveClass("custom-class");
   });
 });
-

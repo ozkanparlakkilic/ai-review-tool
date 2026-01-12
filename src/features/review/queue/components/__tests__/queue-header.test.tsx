@@ -19,4 +19,3 @@ describe("QueueHeader", () => {
     expect(heading).toHaveTextContent("Review Queue");
   });
 });
-

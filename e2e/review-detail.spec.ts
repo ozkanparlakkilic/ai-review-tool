@@ -35,11 +35,14 @@ test.describe("Review Detail", () => {
     await expect(approveBtn).toBeEnabled();
 
     await Promise.all([
-      page.waitForResponse(
-        (resp) =>
-          resp.url().includes("/api/review-items/") && resp.request().method() === "PATCH",
-        { timeout: 15_000 }
-      ).catch(() => null),
+      page
+        .waitForResponse(
+          (resp) =>
+            resp.url().includes("/api/review-items/") &&
+            resp.request().method() === "PATCH",
+          { timeout: 15_000 }
+        )
+        .catch(() => null),
       approveBtn.click(),
     ]);
 
@@ -65,11 +68,14 @@ test.describe("Review Detail", () => {
     await expect(rejectBtn).toBeEnabled();
 
     await Promise.all([
-      page.waitForResponse(
-        (resp) =>
-          resp.url().includes("/api/review-items/") && resp.request().method() === "PATCH",
-        { timeout: 15_000 }
-      ).catch(() => null),
+      page
+        .waitForResponse(
+          (resp) =>
+            resp.url().includes("/api/review-items/") &&
+            resp.request().method() === "PATCH",
+          { timeout: 15_000 }
+        )
+        .catch(() => null),
       rejectBtn.click(),
     ]);
 

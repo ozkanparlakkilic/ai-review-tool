@@ -6,7 +6,9 @@ import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import { useState } from "react";
 
 vi.mock("../view-options", () => ({
-  DataTableViewOptions: () => <div data-testid="view-options">View Options</div>,
+  DataTableViewOptions: () => (
+    <div data-testid="view-options">View Options</div>
+  ),
 }));
 
 const TestComponent = ({
@@ -113,7 +115,9 @@ describe("DataTableToolbar", () => {
         />
       );
 
-      const input = screen.getByPlaceholderText("Filter...") as HTMLInputElement;
+      const input = screen.getByPlaceholderText(
+        "Filter..."
+      ) as HTMLInputElement;
       expect(input.value).toBe("test query");
     });
 
@@ -148,7 +152,9 @@ describe("DataTableToolbar", () => {
 
       await waitFor(() => {
         const buttons = screen.getAllByRole("button");
-        const statusButton = buttons.find(btn => btn.textContent?.includes("Status"));
+        const statusButton = buttons.find((btn) =>
+          btn.textContent?.includes("Status")
+        );
         expect(statusButton).toBeInTheDocument();
       });
     });
@@ -170,12 +176,16 @@ describe("DataTableToolbar", () => {
 
       await waitFor(() => {
         const buttons = screen.getAllByRole("button");
-        const statusButton = buttons.find(btn => btn.textContent?.includes("Status"));
+        const statusButton = buttons.find((btn) =>
+          btn.textContent?.includes("Status")
+        );
         expect(statusButton).toBeInTheDocument();
       });
 
       const buttons = screen.getAllByRole("button");
-      const priorityButton = buttons.find(btn => btn.textContent?.includes("Priority"));
+      const priorityButton = buttons.find((btn) =>
+        btn.textContent?.includes("Priority")
+      );
       if (priorityButton) {
         expect(priorityButton).toBeInTheDocument();
       }
@@ -200,7 +210,9 @@ describe("DataTableToolbar", () => {
 
       await waitFor(() => {
         const buttons = screen.getAllByRole("button");
-        const statusButton = buttons.find(btn => btn.textContent?.includes("Status"));
+        const statusButton = buttons.find((btn) =>
+          btn.textContent?.includes("Status")
+        );
         expect(statusButton).toBeInTheDocument();
       });
     });
@@ -244,9 +256,7 @@ describe("DataTableToolbar", () => {
     });
 
     it("should show Reset button when searchValue is set in server-side mode", () => {
-      render(
-        <TestComponent searchValue="test" onSearchChange={vi.fn()} />
-      );
+      render(<TestComponent searchValue="test" onSearchChange={vi.fn()} />);
 
       expect(screen.getByText("Reset")).toBeInTheDocument();
     });
@@ -300,13 +310,7 @@ describe("DataTableToolbar", () => {
           getCoreRowModel: getCoreRowModel(),
         });
 
-        return (
-          <DataTableToolbar
-            table={table}
-            searchKey="name"
-            filters={[]}
-          />
-        );
+        return <DataTableToolbar table={table} searchKey="name" filters={[]} />;
       };
 
       render(<TestClientComponent />);
@@ -322,7 +326,9 @@ describe("DataTableToolbar", () => {
       await user.click(resetButton);
 
       await waitFor(() => {
-        const inputAfterReset = screen.getByPlaceholderText("Filter...") as HTMLInputElement;
+        const inputAfterReset = screen.getByPlaceholderText(
+          "Filter..."
+        ) as HTMLInputElement;
         expect(inputAfterReset.value).toBe("");
       });
     });
@@ -345,4 +351,3 @@ describe("DataTableToolbar", () => {
     });
   });
 });
-

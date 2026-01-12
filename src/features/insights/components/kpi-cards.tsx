@@ -49,14 +49,20 @@ export function KPICards({ kpis, isLoading }: KPICardsProps) {
     },
     {
       title: "Approval Rate",
-      value: kpis?.approvalRate !== undefined ? formatPercentage(kpis.approvalRate) : "0%",
+      value:
+        kpis?.approvalRate !== undefined
+          ? formatPercentage(kpis.approvalRate)
+          : "0%",
       icon: TrendingUpIcon,
       color: "text-emerald-600",
       bgColor: "bg-emerald-50",
     },
     {
       title: "Avg Review Time",
-      value: kpis?.avgReviewMinutes !== undefined ? formatDuration(kpis.avgReviewMinutes) : "0m",
+      value:
+        kpis?.avgReviewMinutes !== undefined
+          ? formatDuration(kpis.avgReviewMinutes)
+          : "0m",
       icon: TimerIcon,
       color: "text-purple-600",
       bgColor: "bg-purple-50",

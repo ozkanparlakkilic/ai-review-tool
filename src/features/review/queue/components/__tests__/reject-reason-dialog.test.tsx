@@ -38,7 +38,9 @@ describe("RejectReasonDialog", () => {
     expect(
       screen.getByText("Please provide a reason for rejecting these items.")
     ).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Enter rejection reason...")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Enter rejection reason...")
+    ).toBeInTheDocument();
   });
 
   it("should display singular 'item' when count is 1", () => {
@@ -104,7 +106,9 @@ describe("RejectReasonDialog", () => {
     const rejectButton = screen.getByText("Reject 5 items");
     await user.click(rejectButton);
 
-    expect(screen.getByText("Reason must be at least 5 characters")).toBeInTheDocument();
+    expect(
+      screen.getByText("Reason must be at least 5 characters")
+    ).toBeInTheDocument();
     expect(mockOnConfirm).not.toHaveBeenCalled();
   });
 
@@ -147,7 +151,9 @@ describe("RejectReasonDialog", () => {
     const rejectButton = screen.getByText("Reject 5 items");
     await user.click(rejectButton);
 
-    expect(screen.getByText("Reason must be at least 5 characters")).toBeInTheDocument();
+    expect(
+      screen.getByText("Reason must be at least 5 characters")
+    ).toBeInTheDocument();
 
     const cancelButton = screen.getByText("Cancel");
     await user.click(cancelButton);
@@ -174,7 +180,9 @@ describe("RejectReasonDialog", () => {
     const rejectButton = screen.getByText("Reject 5 items");
     await user.click(rejectButton);
 
-    expect(screen.getByText("Reason must be at least 5 characters")).toBeInTheDocument();
+    expect(
+      screen.getByText("Reason must be at least 5 characters")
+    ).toBeInTheDocument();
 
     await user.type(textarea, " more text");
 
@@ -204,4 +212,3 @@ describe("RejectReasonDialog", () => {
     expect(mockOnConfirm).toHaveBeenCalledWith("12345");
   });
 });
-

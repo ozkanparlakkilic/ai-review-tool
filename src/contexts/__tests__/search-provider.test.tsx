@@ -154,7 +154,11 @@ describe("SearchProvider", () => {
     });
     event.preventDefault = preventDefaultSpy;
 
-    render(<SearchProvider><div>Test</div></SearchProvider>);
+    render(
+      <SearchProvider>
+        <div>Test</div>
+      </SearchProvider>
+    );
 
     act(() => {
       document.dispatchEvent(event);
@@ -172,7 +176,11 @@ describe("SearchProvider", () => {
     });
     event.preventDefault = preventDefaultSpy;
 
-    render(<SearchProvider><div>Test</div></SearchProvider>);
+    render(
+      <SearchProvider>
+        <div>Test</div>
+      </SearchProvider>
+    );
 
     act(() => {
       document.dispatchEvent(event);
@@ -224,4 +232,3 @@ describe("useSearch", () => {
     consoleErrorSpy.mockRestore();
   });
 });
-

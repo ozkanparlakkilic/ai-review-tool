@@ -43,12 +43,14 @@ test.describe("Complete User Journey", () => {
     await expect(approveBtn).toBeVisible();
 
     await Promise.all([
-      page.waitForResponse(
-        (resp) =>
-          resp.url().includes("/api/review-items/") &&
-          resp.request().method() === "PATCH",
-        { timeout: 15_000 }
-      ).catch(() => null),
+      page
+        .waitForResponse(
+          (resp) =>
+            resp.url().includes("/api/review-items/") &&
+            resp.request().method() === "PATCH",
+          { timeout: 15_000 }
+        )
+        .catch(() => null),
       approveBtn.click(),
     ]);
 
@@ -119,12 +121,14 @@ test.describe("Complete User Journey", () => {
     await expect(rejectBtn).toBeEnabled({ timeout: 5000 });
 
     await Promise.all([
-      page.waitForResponse(
-        (resp) =>
-          resp.url().includes("/api/review-items/") &&
-          resp.request().method() === "PATCH",
-        { timeout: 15_000 }
-      ).catch(() => null),
+      page
+        .waitForResponse(
+          (resp) =>
+            resp.url().includes("/api/review-items/") &&
+            resp.request().method() === "PATCH",
+          { timeout: 15_000 }
+        )
+        .catch(() => null),
       rejectBtn.click(),
     ]);
 

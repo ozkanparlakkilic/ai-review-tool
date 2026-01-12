@@ -36,10 +36,14 @@ export function DataTablePagination<TData>({
   className,
 }: DataTablePaginationProps<TData>) {
   const isServerSide = !!meta;
-  const currentPage = isServerSide ? meta.page : table.getState().pagination.pageIndex + 1;
+  const currentPage = isServerSide
+    ? meta.page
+    : table.getState().pagination.pageIndex + 1;
   const totalPages = isServerSide ? meta.totalPages : table.getPageCount();
   const pageNumbers = getPageNumbers(currentPage, totalPages);
-  const pageSize = isServerSide ? meta.limit : table.getState().pagination.pageSize;
+  const pageSize = isServerSide
+    ? meta.limit
+    : table.getState().pagination.pageSize;
 
   return (
     <div

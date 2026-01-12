@@ -54,15 +54,21 @@ test.describe("Error Handling", () => {
       await page.waitForTimeout(2000);
 
       const noResultsText = page.getByText(/no results|no items|empty|error/i);
-      await expect(noResultsText.first()).toBeVisible({
-        timeout: 5000,
-      }).catch(() => {
-        const tableBody = page.locator("tbody");
-        expect(tableBody).toBeVisible();
-      });
+      await expect(noResultsText.first())
+        .toBeVisible({
+          timeout: 5000,
+        })
+        .catch(() => {
+          const tableBody = page.locator("tbody");
+          expect(tableBody).toBeVisible();
+        });
 
-      const toast = page.locator('[role="status"]').or(page.locator('[data-sonner-toast]'));
-      await expect(toast.first()).toBeVisible({ timeout: 3000 }).catch(() => {});
+      const toast = page
+        .locator('[role="status"]')
+        .or(page.locator("[data-sonner-toast]"));
+      await expect(toast.first())
+        .toBeVisible({ timeout: 3000 })
+        .catch(() => {});
     });
 
     test("handles 500 error on review detail with UI visible", async ({
@@ -84,9 +90,9 @@ test.describe("Error Handling", () => {
 
           await reviewLink.click();
 
-          await expect(
-            page.getByText(/error loading review/i)
-          ).toBeVisible({ timeout: 5000 });
+          await expect(page.getByText(/error loading review/i)).toBeVisible({
+            timeout: 5000,
+          });
 
           await expect(page.getByText(/prompt/i).first()).toBeVisible();
           await expect(page.getByText(/model output/i).first()).toBeVisible();
@@ -97,8 +103,12 @@ test.describe("Error Handling", () => {
           await expect(approveButton).toBeVisible();
           await expect(approveButton).toBeDisabled();
 
-          const toast = page.locator('[role="status"]').or(page.locator('[data-sonner-toast]'));
-          await expect(toast.first()).toBeVisible({ timeout: 3000 }).catch(() => {});
+          const toast = page
+            .locator('[role="status"]')
+            .or(page.locator("[data-sonner-toast]"));
+          await expect(toast.first())
+            .toBeVisible({ timeout: 3000 })
+            .catch(() => {});
         }
       }
     });
@@ -117,7 +127,9 @@ test.describe("Error Handling", () => {
 
       await expect(page).toHaveURL(/\/review\/[^/]+/);
 
-      const feedback = page.getByLabel(/feedback/i).or(page.locator("#feedback"));
+      const feedback = page
+        .getByLabel(/feedback/i)
+        .or(page.locator("#feedback"));
       await expect(feedback).toBeVisible();
       await expect(
         page.getByRole("button", { name: /reject/i }).first()
@@ -162,23 +174,35 @@ test.describe("Error Handling", () => {
 
       await page.waitForTimeout(2000);
 
-      const approveButton = page.getByRole("button", { name: /approve.*selected/i });
-      await expect(approveButton).toBeVisible({ timeout: 5000 }).catch(async () => {
-        const buttons = page.getByRole("button");
-        const buttonCount = await buttons.count();
-        expect(buttonCount).toBeGreaterThan(0);
+      const approveButton = page.getByRole("button", {
+        name: /approve.*selected/i,
       });
+      await expect(approveButton)
+        .toBeVisible({ timeout: 5000 })
+        .catch(async () => {
+          const buttons = page.getByRole("button");
+          const buttonCount = await buttons.count();
+          expect(buttonCount).toBeGreaterThan(0);
+        });
 
-      const rejectButton = page.getByRole("button", { name: /reject.*selected/i });
-      await expect(rejectButton).toBeVisible({ timeout: 5000 }).catch(() => {});
+      const rejectButton = page.getByRole("button", {
+        name: /reject.*selected/i,
+      });
+      await expect(rejectButton)
+        .toBeVisible({ timeout: 5000 })
+        .catch(() => {});
 
       await expect(page.getByRole("link", { name: /insights/i })).toBeVisible();
       await expect(
         page.getByRole("link", { name: /audit log/i })
       ).toBeVisible();
 
-      const toast = page.locator('[role="status"]').or(page.locator('[data-sonner-toast]'));
-      await expect(toast.first()).toBeVisible({ timeout: 3000 }).catch(() => {});
+      const toast = page
+        .locator('[role="status"]')
+        .or(page.locator("[data-sonner-toast]"));
+      await expect(toast.first())
+        .toBeVisible({ timeout: 3000 })
+        .catch(() => {});
     });
   });
 });

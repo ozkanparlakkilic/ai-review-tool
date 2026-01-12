@@ -22,8 +22,18 @@ export function AppShell({ children }: AppShellProps) {
 
   const links = [
     { href: "/", label: "Review Queue", visible: true, requiresAuth: true },
-    { href: "/insights", label: "Insights", visible: isAdmin, requiresAuth: true },
-    { href: "/audit-log", label: "Audit Log", visible: isAdmin, requiresAuth: true },
+    {
+      href: "/insights",
+      label: "Insights",
+      visible: isAdmin,
+      requiresAuth: true,
+    },
+    {
+      href: "/audit-log",
+      label: "Audit Log",
+      visible: isAdmin,
+      requiresAuth: true,
+    },
   ];
 
   const visibleLinks = links.filter((link) => {
@@ -54,7 +64,10 @@ export function AppShell({ children }: AppShellProps) {
                     pathname === link.href
                       ? "bg-accent text-accent-foreground"
                       : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                    isLoading && link.requiresAuth && link.href !== "/" && "opacity-50"
+                    isLoading &&
+                      link.requiresAuth &&
+                      link.href !== "/" &&
+                      "opacity-50"
                   )}
                 >
                   {link.label}
