@@ -19,6 +19,13 @@ const eslintConfig = defineConfig([
       "@typescript-eslint/no-unused-vars": "warn",
     },
   },
+  {
+    files: ["e2e/**/*"],
+    rules: {
+      "react-hooks/rules-of-hooks": "off",
+      "@typescript-eslint/no-unused-vars": "warn",
+    },
+  },
 ]);
 
 export default eslintConfig;
