@@ -18,18 +18,25 @@ interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname();
-  const { isAdmin, isAuthenticated } = useAuth();
+  const { isAdmin, isAuthenticated, isLoading } = useAuth();
 
   const links = [
-    { href: "/", label: "Review Queue", visible: true },
-    { href: "/insights", label: "Insights", visible: isAdmin },
-    { href: "/audit-log", label: "Audit Log", visible: isAdmin },
+    { href: "/", label: "Review Queue", visible: true, requiresAuth: true },
+    { href: "/insights", label: "Insights", visible: isAdmin, requiresAuth: true },
+    { href: "/audit-log", label: "Audit Log", visible: isAdmin, requiresAuth: true },
   ];
+
+  const visibleLinks = links.filter((link) => {
+    if (isLoading) {
+      return link.href === "/";
+    }
+    return link.visible;
+  });
 
   return (
     <SearchProvider>
       <div className="bg-background min-h-screen">
-        {isAuthenticated && (
+        {(isAuthenticated || isLoading) && (
           <Header fixed>
             <div className="mr-4 flex items-center gap-2">
               <span className="text-sm font-bold whitespace-nowrap lg:text-base">
@@ -38,22 +45,21 @@ export function AppShell({ children }: AppShellProps) {
             </div>
 
             <nav className="hidden items-center gap-1 lg:flex">
-              {links
-                .filter((link) => link.visible)
-                .map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={cn(
-                      "inline-flex h-8 items-center justify-center rounded-md px-3 text-sm font-medium whitespace-nowrap transition-colors",
-                      pathname === link.href
-                        ? "bg-accent text-accent-foreground"
-                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                    )}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+              {visibleLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={cn(
+                    "inline-flex h-8 items-center justify-center rounded-md px-3 text-sm font-medium whitespace-nowrap transition-colors",
+                    pathname === link.href
+                      ? "bg-accent text-accent-foreground"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                    isLoading && link.requiresAuth && link.href !== "/" && "opacity-50"
+                  )}
+                >
+                  {link.label}
+                </Link>
+              ))}
             </nav>
 
             <div className="ml-auto flex items-center gap-2 md:flex-1 md:justify-end">
@@ -61,12 +67,16 @@ export function AppShell({ children }: AppShellProps) {
                 <CommandSearch />
               </div>
 
-              <Separator
-                orientation="vertical"
-                className="hidden h-4 lg:block"
-              />
+              {(isAuthenticated || isLoading) && (
+                <>
+                  <Separator
+                    orientation="vertical"
+                    className="hidden h-4 lg:block"
+                  />
 
-              <ProfileDropdown />
+                  <ProfileDropdown isLoading={isLoading && !isAuthenticated} />
+                </>
+              )}
             </div>
           </Header>
         )}

@@ -1,7 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { activityLogService } from "@/features/audit-log/services/activity-log";
+import { useActivityLogs } from "@/features/audit-log/hooks/useActivityLogs";
 import { ProtectedRoute } from "@/shared/components/protected-route";
 import { AppShell } from "@/shared/components/app-shell";
 import { ROLES } from "@/shared/constants/roles";
@@ -11,10 +10,7 @@ import { Download } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AuditLogPage() {
-  const { data: logs, isLoading } = useQuery({
-    queryKey: ["activity-logs"],
-    queryFn: () => activityLogService.getLogs(),
-  });
+  const { data: logs, isLoading } = useActivityLogs();
 
   const handleExport = () => {
     if (!logs || logs.length === 0) {
@@ -71,7 +67,11 @@ export default function AuditLogPage() {
               Track and audit all critical actions performed in the system
             </p>
           </div>
-          <Button onClick={handleExport} variant="outline" disabled={isLoading}>
+          <Button
+            onClick={handleExport}
+            variant="outline"
+            disabled={isLoading || !logs || logs.length === 0}
+          >
             <Download className="mr-2 h-4 w-4" />
             Export CSV
           </Button>

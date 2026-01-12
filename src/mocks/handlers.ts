@@ -65,7 +65,13 @@ export const handlers = [
       updated.push(mockReviewItems[itemIndex]);
     });
 
-    return HttpResponse.json({ updated, failed });
+    return HttpResponse.json({
+      data: {
+        updatedIds: updated.map((item) => item.id),
+        failed,
+        items: updated,
+      },
+    });
   }),
 
   http.get("/api/review-items/:id", ({ params }) => {
@@ -242,7 +248,8 @@ export const handlers = [
     const action = url.searchParams.get("action");
     const userRole = url.searchParams.get("userRole");
     const riskLevel = url.searchParams.get("riskLevel");
-    const search = url.searchParams.get("search")?.toLowerCase();
+    const search = url.searchParams.get("search") || url.searchParams.get("q");
+    const searchLower = search?.toLowerCase();
 
     let filtered = [...mockActivityLogs];
 
@@ -255,12 +262,12 @@ export const handlers = [
     if (riskLevel) {
       filtered = filtered.filter((log) => log.riskLevel === riskLevel);
     }
-    if (search) {
+    if (searchLower) {
       filtered = filtered.filter(
         (log) =>
-          log.userName.toLowerCase().includes(search) ||
-          log.targetId?.toLowerCase().includes(search) ||
-          log.action.toLowerCase().includes(search)
+          log.userName.toLowerCase().includes(searchLower) ||
+          log.targetId?.toLowerCase().includes(searchLower) ||
+          log.action.toLowerCase().includes(searchLower)
       );
     }
 
@@ -269,7 +276,10 @@ export const handlers = [
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
 
-    return HttpResponse.json(filtered);
+    return HttpResponse.json({
+      items: filtered,
+      meta: { total: filtered.length },
+    });
   }),
 
   http.post("/api/activity-logs", async ({ request }) => {

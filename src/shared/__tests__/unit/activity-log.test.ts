@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { cn, getPageNumbers } from "@/lib/utils";
 import { activityLogService } from "@/features/audit-log/services/activity-log";
-import { http, HttpError } from "@/shared/services/http";
+import { http } from "@/shared/services/http";
 import { ActivityAction } from "@/shared/types/activity-log";
 
 vi.mock("@/shared/services/http", () => ({
@@ -16,7 +15,10 @@ describe("activityLogService", () => {
   describe("getLogs", () => {
     it("fetches logs with filters", async () => {
       const mockLogs = [{ id: "1", action: ActivityAction.USER_LOGIN }];
-      vi.mocked(http).mockResolvedValue(mockLogs);
+      vi.mocked(http).mockResolvedValue({
+        items: mockLogs,
+        meta: { total: mockLogs.length },
+      });
 
       const result = await activityLogService.getLogs({
         action: ActivityAction.USER_LOGIN,
@@ -29,7 +31,10 @@ describe("activityLogService", () => {
     });
 
     it("fetches logs without filters", async () => {
-      vi.mocked(http).mockResolvedValue([]);
+      vi.mocked(http).mockResolvedValue({
+        items: [],
+        meta: { total: 0 },
+      });
       await activityLogService.getLogs();
       expect(http).toHaveBeenCalledWith("/activity-logs");
     });

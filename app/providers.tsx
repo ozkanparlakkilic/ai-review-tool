@@ -10,7 +10,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     async function initMSW() {
-      if (process.env.NODE_ENV === "development") {
+      const shouldUseMSW =
+        process.env.NODE_ENV === "development" &&
+        process.env.NEXT_PUBLIC_USE_MSW === "true";
+
+      if (shouldUseMSW) {
         const { worker } = await import("@/mocks/browser");
         await worker.start({
           onUnhandledRequest: "bypass",
@@ -22,7 +26,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
     initMSW();
   }, []);
 
-  if (process.env.NODE_ENV === "development" && !mswReady) {
+  const shouldUseMSW =
+    process.env.NODE_ENV === "development" &&
+    process.env.NEXT_PUBLIC_USE_MSW === "true";
+
+  if (shouldUseMSW && !mswReady) {
     return null;
   }
 
