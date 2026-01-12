@@ -11,8 +11,9 @@ RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
 # Copy package files
 COPY package.json pnpm-lock.yaml .npmrc ./
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Install dependencies with cache mount
+RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store \
+    pnpm install --frozen-lockfile
 
 # Stage 2: Builder
 FROM node:20-alpine AS builder
