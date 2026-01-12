@@ -98,6 +98,19 @@ This milestone includes:
 - ✅ Environment-based configuration (development vs production)
 - ✅ Source map upload configuration for better stack traces
 
+## M8 - Real Backend API Integration Complete ✅
+
+This milestone includes:
+
+- ✅ PostgreSQL database with Prisma ORM
+- ✅ Real API routes replacing MSW mocks
+- ✅ Database-backed data persistence
+- ✅ Comprehensive API integration tests (100+ tests)
+- ✅ E2E tests with real database
+- ✅ Test data factories and fixtures
+- ✅ Database seeding for development and testing
+- ✅ 70%+ test coverage achieved
+
 ## Features
 
 ### Review Queue
@@ -507,26 +520,170 @@ This project includes five GitHub Actions workflows:
 
 ## Environment Variables
 
-Create a `.env.local` file in the root directory (see `.env.example` for template):
+Create a `.env.local` file in the root directory (copy from `.env.example`):
 
 ### Required for Development
 
 ```bash
+# NextAuth Configuration
 NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your-secret-key-here
+NEXTAUTH_SECRET=your-secret-key-min-32-chars-long-for-production
+AUTH_TRUST_HOST=true
+
+# Database Configuration (Prisma + PostgreSQL)
+# Local PostgreSQL connection string
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/ai-review-tool?schema=public"
+
+# PostgreSQL Configuration (for Docker Compose)
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=ai-review-tool
+POSTGRES_PORT=5432
+
+# MSW Configuration (optional - only for local mock testing)
+NEXT_PUBLIC_USE_MSW=false
+
+# Server Configuration
+PORT=3000
+BASE_URL=http://127.0.0.1:3000
+NEXT_RUNTIME=nodejs
+SENTRY_ENABLED=false
+```
+
+### Database Setup
+
+#### Option 1: Using Docker Compose (Recommended)
+
+Start PostgreSQL using Docker Compose:
+
+```bash
+# Start PostgreSQL database
+docker-compose -f docker-compose.dev.yml up -d db
+
+# Wait for database to be ready, then run migrations
+pnpm db:generate
+pnpm db:push
+pnpm db:seed
+```
+
+#### Option 2: Using Docker directly
+
+Start PostgreSQL container:
+
+```bash
+docker run --name ai-review-postgres \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=ai-review-tool \
+  -p 5432:5432 \
+  -d postgres:16
+
+# Wait for database to be ready, then run migrations
+pnpm db:generate
+pnpm db:push
+pnpm db:seed
+```
+
+#### Option 3: Local PostgreSQL installation
+
+If you have PostgreSQL installed locally, create a database and update `DATABASE_URL`:
+
+```bash
+# Create database
+createdb ai-review-tool
+
+# Run migrations
+pnpm db:generate
+pnpm db:push
+pnpm db:seed
 ```
 
 ### Required for Production
 
 ```bash
+NEXTAUTH_URL=https://your-domain.com
+NEXTAUTH_SECRET=your-production-secret-key-min-32-chars-long
+AUTH_TRUST_HOST=true
+DATABASE_URL="postgresql://user:password@host:5432/database?schema=public"
+
+# Server Configuration
+PORT=3000
+BASE_URL=https://your-domain.com
+NEXT_RUNTIME=nodejs
+SENTRY_ENABLED=true
+
+# Optional: Sentry Error Tracking
 NEXT_PUBLIC_SENTRY_DSN=your-sentry-client-dsn
 SENTRY_DSN=your-sentry-server-dsn
 SENTRY_ORG=your-sentry-org
 SENTRY_PROJECT=your-sentry-project
-SENTRY_AUTH_TOKEN=your-sentry-auth-token  # For source map uploads
+SENTRY_AUTH_TOKEN=your-sentry-auth-token
 ```
 
 **Note**: Get your DSN from [Sentry Dashboard](https://sentry.io/settings/{org}/projects/{project}/keys/). The `SENTRY_AUTH_TOKEN` is automatically created in `.env.sentry-build-plugin` by Sentry wizard.
+
+### GitHub Actions Secrets
+
+For CI/CD pipelines, configure the following secrets in your GitHub repository settings (`Settings > Secrets and variables > Actions`):
+
+#### Required Secrets
+
+- `NEXTAUTH_SECRET` - NextAuth secret key (minimum 32 characters)
+  - **Required for**: All workflows (E2E, Quality, Tests, Lighthouse)
+  - **Example**: `your-production-secret-key-min-32-chars-long`
+
+#### Optional Secrets (with fallback values)
+
+These secrets are optional but recommended for production CI/CD:
+
+- `DATABASE_URL` - PostgreSQL connection string (falls back to local CI database)
+  - **Default**: Uses local PostgreSQL instance created by `ankane/setup-postgres@v1`
+  - **Use case**: For custom database connections in CI
+
+- `NEXTAUTH_URL` - NextAuth callback URL (defaults to `http://localhost:3000` or `http://127.0.0.1:3000`)
+  - **Default**: `http://localhost:3000` or `http://127.0.0.1:3000`
+  - **Use case**: Custom callback URL for CI/CD
+
+- `AUTH_TRUST_HOST` - Trust host for NextAuth (defaults to `true`)
+  - **Default**: `true`
+
+- `PORT` - Server port (defaults to `3000`)
+  - **Default**: `3000`
+
+- `BASE_URL` - Base URL for the application (defaults to `http://localhost:3000`)
+  - **Default**: `http://localhost:3000` or `http://127.0.0.1:3000`
+
+- `NEXT_RUNTIME` - Next.js runtime (defaults to `nodejs`)
+  - **Default**: `nodejs`
+  - **Options**: `nodejs`, `edge`
+
+- `SENTRY_ENABLED` - Enable Sentry error tracking (defaults to `false`)
+  - **Default**: `false`
+  - **Options**: `true`, `false`
+
+- `NODE_ENV` - Node.js environment (defaults to `test` for unit tests, `production` for builds)
+  - **Default**: Varies by workflow
+  - **Options**: `development`, `production`, `test`
+
+- `LHCI_GITHUB_APP_TOKEN` - Lighthouse CI GitHub App token (for Lighthouse workflow only)
+  - **Required for**: Lighthouse workflow (if using GitHub App integration)
+  - **Use case**: Uploading Lighthouse results to GitHub
+
+#### Setting up GitHub Secrets
+
+1. Go to your GitHub repository
+2. Navigate to `Settings > Secrets and variables > Actions`
+3. Click `New repository secret`
+4. Add each secret with its corresponding value
+5. Workflows will automatically use these secrets when available, falling back to default values when not set
+
+**Security Best Practices:**
+
+- ✅ Never commit secrets to version control
+- ✅ Use GitHub Secrets for all sensitive values
+- ✅ Rotate secrets regularly
+- ✅ Use different secrets for different environments (dev/staging/prod)
+- ✅ Use minimum required permissions for CI/CD access
 
 ## Project Configuration Files
 
@@ -552,10 +709,9 @@ SENTRY_AUTH_TOKEN=your-sentry-auth-token  # For source map uploads
 
 ## Next Steps
 
-- 📡 Real backend API integration (replace MSW)
 - ⚡ Performance optimizations (virtualization, profiling)
 - 📄 Full case study & architecture documentation
-- 🧪 Increase test coverage thresholds (currently 70% target)
+- 🧪 Increase test coverage thresholds (maintain 70%+ target)
 
 ## License
 
