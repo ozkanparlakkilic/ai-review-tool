@@ -3,6 +3,7 @@ import {
   ArrowUpIcon,
   CaretSortIcon,
   EyeNoneIcon,
+  Cross2Icon,
 } from "@radix-ui/react-icons";
 import { type Column } from "@tanstack/react-table";
 import { cn } from "@/lib/utils";
@@ -29,6 +30,8 @@ export function DataTableColumnHeader<TData, TValue>({
   if (!column.getCanSort()) {
     return <div className={cn(className)}>{title}</div>;
   }
+
+  const isSorted = column.getIsSorted() !== false;
 
   return (
     <div className={cn("flex items-center space-x-2", className)}>
@@ -58,6 +61,15 @@ export function DataTableColumnHeader<TData, TValue>({
             <ArrowDownIcon className="text-muted-foreground/70 size-3.5" />
             Desc
           </DropdownMenuItem>
+          {isSorted && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => column.clearSorting()}>
+                <Cross2Icon className="text-muted-foreground/70 size-3.5" />
+                Cancel
+              </DropdownMenuItem>
+            </>
+          )}
           {column.getCanHide() && (
             <>
               <DropdownMenuSeparator />

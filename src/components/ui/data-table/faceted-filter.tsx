@@ -28,15 +28,38 @@ type DataTableFacetedFilterProps<TData, TValue> = {
     value: string;
     icon?: React.ComponentType<{ className?: string }>;
   }[];
+  value?: string;
+  onChange?: (value: string | undefined) => void;
+  multiple?: boolean;
 };
 
 export function DataTableFacetedFilter<TData, TValue>({
   column,
   title,
   options,
+  value,
+  onChange,
+  multiple = false,
 }: DataTableFacetedFilterProps<TData, TValue>) {
+  const isServerSide = !!onChange;
   const facets = column?.getFacetedUniqueValues();
-  const selectedValues = new Set(column?.getFilterValue() as string[]);
+  
+  const selectedValues = React.useMemo(() => {
+    if (isServerSide && value) {
+      const values = multiple ? value.split(",").filter(Boolean) : [value];
+      return new Set(values);
+    }
+    if (!isServerSide && column) {
+      const filterValue = column.getFilterValue();
+      if (multiple && Array.isArray(filterValue)) {
+        return new Set(filterValue);
+      }
+      if (!multiple && filterValue) {
+        return new Set([filterValue as string]);
+      }
+    }
+    return new Set<string>();
+  }, [isServerSide, value, multiple, column]);
 
   return (
     <Popover>
@@ -91,15 +114,34 @@ export function DataTableFacetedFilter<TData, TValue>({
                   <CommandItem
                     key={option.value}
                     onSelect={() => {
-                      if (isSelected) {
-                        selectedValues.delete(option.value);
+                      if (isServerSide && onChange) {
+                        if (multiple) {
+                          const newValues = new Set(selectedValues);
+                          if (isSelected) {
+                            newValues.delete(option.value);
+                          } else {
+                            newValues.add(option.value);
+                          }
+                          onChange(newValues.size > 0 ? Array.from(newValues).join(",") : undefined);
+                        } else {
+                          onChange(isSelected ? undefined : option.value);
+                        }
                       } else {
-                        selectedValues.add(option.value);
+                        if (multiple) {
+                          const newValues = new Set(selectedValues);
+                          if (isSelected) {
+                            newValues.delete(option.value);
+                          } else {
+                            newValues.add(option.value);
+                          }
+                          const filterValues = Array.from(newValues);
+                          column?.setFilterValue(
+                            filterValues.length > 0 ? filterValues : undefined
+                          );
+                        } else {
+                          column?.setFilterValue(isSelected ? undefined : option.value);
+                        }
                       }
-                      const filterValues = Array.from(selectedValues);
-                      column?.setFilterValue(
-                        filterValues.length ? filterValues : undefined
-                      );
                     }}
                   >
                     <div
@@ -130,7 +172,13 @@ export function DataTableFacetedFilter<TData, TValue>({
                 <CommandSeparator />
                 <CommandGroup>
                   <CommandItem
-                    onSelect={() => column?.setFilterValue(undefined)}
+                    onSelect={() => {
+                      if (isServerSide && onChange) {
+                        onChange(undefined);
+                      } else {
+                        column?.setFilterValue(undefined);
+                      }
+                    }}
                     className="justify-center text-center"
                   >
                     Clear filters

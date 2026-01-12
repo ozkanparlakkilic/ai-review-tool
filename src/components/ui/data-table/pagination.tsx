@@ -15,18 +15,31 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+export interface PaginationMeta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 type DataTablePaginationProps<TData> = {
   table: Table<TData>;
+  meta?: PaginationMeta;
+  onPageSizeChange?: (pageSize: number) => void;
   className?: string;
 };
 
 export function DataTablePagination<TData>({
   table,
+  meta,
+  onPageSizeChange,
   className,
 }: DataTablePaginationProps<TData>) {
-  const currentPage = table.getState().pagination.pageIndex + 1;
-  const totalPages = table.getPageCount();
+  const isServerSide = !!meta;
+  const currentPage = isServerSide ? meta.page : table.getState().pagination.pageIndex + 1;
+  const totalPages = isServerSide ? meta.totalPages : table.getPageCount();
   const pageNumbers = getPageNumbers(currentPage, totalPages);
+  const pageSize = isServerSide ? meta.limit : table.getState().pagination.pageSize;
 
   return (
     <div
@@ -43,9 +56,14 @@ export function DataTablePagination<TData>({
         </div>
         <div className="flex items-center gap-2 @max-2xl/content:flex-row-reverse">
           <Select
-            value={`${table.getState().pagination.pageSize}`}
+            value={`${pageSize}`}
             onValueChange={(value) => {
-              table.setPageSize(Number(value));
+              const newPageSize = Number(value);
+              if (isServerSide && onPageSizeChange) {
+                onPageSizeChange(newPageSize);
+              } else {
+                table.setPageSize(newPageSize);
+              }
             }}
           >
             <SelectTrigger className="h-8 w-[70px]">
