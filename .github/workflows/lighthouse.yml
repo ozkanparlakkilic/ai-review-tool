@@ -8,55 +8,70 @@ on:
 
 jobs:
   lighthouse:
-    name: Lighthouse Performance Audit
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v4
         with:
           version: 9.15.4
 
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
+      - uses: actions/setup-node@v4
         with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          node-version: "20"
+          cache: "pnpm"
 
-      - name: Install dependencies
+      - name: Install deps
         run: pnpm install --frozen-lockfile
 
-      - name: Build application
+      - name: Setup PostgreSQL
+        uses: ankane/setup-postgres@v1
+        with:
+          postgres-version: "16"
+          database: ai-review-tool-lighthouse
+          user: postgres
+
+      - name: Prisma generate
+        run: pnpm db:generate
+
+      - name: DB push + seed
+        run: pnpm db:push && pnpm db:seed
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_LIGHTHOUSE }}
+
+      - name: Build
         run: pnpm build
         env:
           NODE_ENV: production
+          DATABASE_URL: ${{ secrets.DATABASE_URL_LIGHTHOUSE }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+          AUTH_TRUST_HOST: ${{ vars.AUTH_TRUST_HOST }}
+          BASE_URL: ${{ vars.BASE_URL }}
+          PORT: ${{ vars.PORT }}
+          NEXT_RUNTIME: ${{ vars.NEXT_RUNTIME }}
+          SENTRY_ENABLED: ${{ vars.SENTRY_ENABLED }}
 
-      - name: Install Lighthouse CI
-        run: npm install -g @lhci/cli@0.14.x
+      - name: Install LHCI
+        run: npm i -g @lhci/cli@0.14.x
 
-      - name: Run Lighthouse CI
+      - name: Run LHCI
         run: |
           pnpm start &
           sleep 10
-          lhci autorun --config=lighthouserc.json || echo "Lighthouse CI completed with warnings"
+          lhci autorun --config=lighthouserc.json
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL_LIGHTHOUSE }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+          AUTH_TRUST_HOST: ${{ vars.AUTH_TRUST_HOST }}
+          BASE_URL: ${{ vars.BASE_URL }}
+          PORT: ${{ vars.PORT }}
+          NEXT_RUNTIME: ${{ vars.NEXT_RUNTIME }}
+          SENTRY_ENABLED: ${{ vars.SENTRY_ENABLED }}
+          NODE_ENV: production
 
       - name: Upload Lighthouse results
         if: always()
@@ -65,4 +80,3 @@ jobs:
           name: lighthouse-results
           path: .lighthouseci
           retention-days: 30
-

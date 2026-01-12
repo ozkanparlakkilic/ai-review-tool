@@ -53,10 +53,14 @@ RUN chown -R nextjs:nodejs /app
 
 USER nextjs
 
-EXPOSE 3000
+# Default values can be overridden via docker-compose or docker run -e
+ARG PORT=3000
+ARG HOSTNAME=0.0.0.0
 
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
+EXPOSE ${PORT}
+
+ENV PORT=${PORT}
+ENV HOSTNAME=${HOSTNAME}
 
 CMD ["node", "server.js"]
 

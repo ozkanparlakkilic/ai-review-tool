@@ -12,38 +12,63 @@ concurrency:
 
 jobs:
   e2e:
-    name: E2E Tests (Playwright)
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v4
         with:
           version: 9.15.4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "pnpm"
 
-      - name: Install dependencies
+      - name: Install deps
         run: pnpm install --frozen-lockfile
+
+      - name: Setup PostgreSQL
+        uses: ankane/setup-postgres@v1
+        with:
+          postgres-version: "16"
+          database: ai-review-tool-test
+          user: postgres
 
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Run E2E tests
+      - name: Prisma generate
+        run: pnpm db:generate
+
+      - name: DB push
+        run: pnpm db:push
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_E2E }}
+
+      - name: DB seed
+        run: pnpm db:seed
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_E2E }}
+
+      - name: Run E2E
         run: pnpm test:e2e
         env:
           CI: true
-          PORT: 3000
+          NODE_ENV: production
+          E2E: true
+          DATABASE_URL: ${{ secrets.DATABASE_URL_E2E }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          AUTH_TRUST_HOST: ${{ vars.AUTH_TRUST_HOST }}
+          BASE_URL: ${{ vars.BASE_URL }}
+          PORT: ${{ vars.PORT }}
+          NEXT_RUNTIME: ${{ vars.NEXT_RUNTIME }}
+          SENTRY_ENABLED: ${{ vars.SENTRY_ENABLED }}
 
-      - name: Upload test results
+      - name: Upload report
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -51,7 +76,7 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
-      - name: Upload test traces
+      - name: Upload traces
         if: always()
         uses: actions/upload-artifact@v4
         with:
