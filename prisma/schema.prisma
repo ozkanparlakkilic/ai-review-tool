@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum Priority {
+  low
+  medium
+  high
+  critical
+}
+
+enum ActivityAction {
+  REVIEW_APPROVED
+  REVIEW_REJECTED
+  BULK_APPROVE
+  BULK_REJECT
+  STREAM_STARTED
+  STREAM_CANCELLED
+  USER_LOGIN
+  USER_LOGOUT
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum Role {
+  REVIEWER
+  ADMIN
+}
+
+model ReviewItem {
+  id          String        @id @default(cuid())
+  prompt      String
+  modelOutput String
+  status      ReviewStatus  @default(PENDING)
+  priority    Priority      @default(medium)
+  feedback    String?
+  reviewedAt  DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("review_items")
+  @@index([status])
+  @@index([createdAt])
+  @@index([updatedAt])
+}
+
+model ActivityLog {
+  id        String         @id @default(cuid())
+  userId    String
+  userName  String
+  userRole  Role
+  action    ActivityAction
+  targetId  String?
+  groupId   String?
+  metadata  Json?
+  riskLevel RiskLevel
+  createdAt DateTime       @default(now())
+
+  @@map("activity_logs")
+  @@index([createdAt])
+  @@index([action])
+  @@index([userRole])
+  @@index([riskLevel])
+}
+
