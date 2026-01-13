@@ -4,8 +4,8 @@ A modern human-in-the-loop workflow application for reviewing AI-generated outpu
 
 ## 📚 Documentation
 
-- **[Case Study](CASE_STUDY.md)** - Complete project case study with implementation details, challenges, and results
-- **[Architecture](ARCHITECTURE.md)** - System architecture, design decisions, and technical deep-dives
+- **[Case Study](docs/CASE_STUDY.md)** - Complete project case study with implementation details, challenges, and results
+- **[Architecture](docs/ARCHITECTURE.md)** - System architecture, design decisions, and technical deep-dives
 - **[README](README.md)** - Quick start guide and project overview (you are here)
 
 ## Features

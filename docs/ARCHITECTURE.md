@@ -1128,7 +1128,7 @@ This architecture demonstrates production-ready design patterns across:
 - 280MB Docker image (77% reduction)
 - 100/100 Lighthouse accessibility & SEO
 
-For detailed implementation examples and decision rationale, see [CASE_STUDY.md](CASE_STUDY.md).
+For detailed implementation examples and decision rationale, see [CASE_STUDY.md](./CASE_STUDY.md).
 
 ---
 
